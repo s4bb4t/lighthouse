@@ -13,59 +13,76 @@ func (e *SPError) Wrap(src *SPError) *SPError {
 	return e
 }
 
-// Wrap wraps err into new-initialized SPError from provided Err
-func Wrap(err *SPError, f Err) *SPError { // TODO: generic
-	h, _ := f.hash()
-	if cmpHashes(err.id, h) {
-		return err
-	}
+// Wrap wraps err into new-initialized SPError from provided Err or existing SPError.
+// It returns dest if src matches its hash, otherwise wraps src into dest.
+func Wrap(src *SPError, dst any) *SPError {
+	switch v := dst.(type) {
+	case Err:
+		h, _ := v.hash()
+		if cmpHashes(src.id, h) {
+			return src
+		}
 
-	sp := SP(f)
-	sp.underlying = err
-	sp.remainsUnderlying = err.remainsUnderlying + 1
-	return sp
+		res := SP(v)
+		res.underlying = src
+		res.remainsUnderlying = src.remainsUnderlying + 1
+		return res
+	case *SPError:
+		if src.IsSP(v) {
+			return src
+		}
+
+		v.underlying = src
+		v.remainsUnderlying = src.remainsUnderlying + 1
+		return v
+	default:
+		panic("unsupported destination type")
+	}
 }
 
+// Pop extracts and returns the current error from the error chain.
+// If the current object is nil or there are no more underlying errors (remainsUnderlying == -1),
+// returns nil.
 func (e *SPError) Pop() *SPError {
 	if e == nil || e.remainsUnderlying == -1 {
 		return nil
 	}
 
-	r := *e
-	r.underlying = nil
+	result := *e
+	result.underlying = nil
 
 	if e.underlying != nil {
 		*e = *e.underlying
 	} else {
 		e.remainsUnderlying--
 	}
-	return &r
+
+	return &result
 }
 
+// Spin processes the error chain until reaching a specified error level.
+// Returns the last error that matches the specified level.
+// If the initial error level is higher than required, returns an Internal error.
 func (e *SPError) Spin(lvl levels.ErrorLevel) *SPError {
-	var cp = &SPError{}
+	if lvl == levels.LevelNoop {
+		return nil
+	}
+
+	cp := &SPError{}
 	*cp = *e
 
-	var head, ls *SPError
-	head = cp.Pop()
-	ls = head
-	if head.level > lvl {
+	cur := cp.Pop()
+	if cur == nil {
+		return nil
+	}
+	if cur.level > lvl {
 		return Registry.errs[Internal]
 	}
 
-	cnt := 0
-	switch lvl {
-	case levels.LevelNoop:
-		return nil
-	default:
-		for head.level <= lvl {
-			ls = head
-			head = cp.Pop()
-			if head == nil {
-				break
-			}
-			cnt += 5
-		}
-		return ls
+	last := cur
+	for cur != nil && cur.level <= lvl {
+		last, cur = cur, cp.Pop()
 	}
+
+	return last
 }

@@ -9,13 +9,8 @@ import (
 func TestSPError_Spin(t *testing.T) {
 	root := Api()
 
-	err := root.Spin(levels.LevelHighUser)
+	err := root.Spin(levels.LevelMediumDebug)
 	fmt.Println(err)
-	fmt.Println()
-	fmt.Println()
-	err = root.Spin(levels.LevelMediumDebug)
-	fmt.Println(err)
-	fmt.Println()
 	fmt.Println()
 	err = root.Spin(levels.LevelDeepDebug)
 	fmt.Println(err)
