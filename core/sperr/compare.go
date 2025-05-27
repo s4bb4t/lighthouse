@@ -13,6 +13,25 @@ func (e *SPError) Is(err error) bool {
 	return errors.Is(e.cause, err)
 }
 
+// DeepIs tries to find err in whole SPError chain
+func (e *SPError) DeepIs(err error) bool {
+	var cp = &SPError{}
+	*cp = *e
+
+	var head *SPError
+	for {
+		head = cp.Pop()
+		if head == nil {
+			break
+		}
+		if errors.Is(head.cause, err) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // IsSP compares two SPErrors by their hash IDs.
 // It returns true if both errors have the same hash ID.
 // IsSP compares hashes of SpErrors, not their values or descriptions.

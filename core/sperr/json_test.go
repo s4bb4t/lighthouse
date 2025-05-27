@@ -1,6 +1,7 @@
 package sperr
 
 import (
+	"github.com/s4bb4t/lighthouse/core/levels"
 	"testing"
 
 	"github.com/mailru/easyjson/jwriter"
@@ -29,7 +30,7 @@ func TestMarshalEasyJSON(t *testing.T) {
 				desc:     "Test description",
 				hint:     "Test hint",
 				httpCode: 404,
-				level:    LevelInfo,
+				level:    levels.LevelInfo,
 				meta:     map[string]any{"key1": "value1", "key2": 123},
 			},
 			want:    `{"messages":{"en":"error message","fr":"message d'erreur"},"description":"Test description","hint":"Test hint","http_code":404,"level":8,"meta":{"key1":"value1","key2":123}}`,

@@ -2,21 +2,22 @@ package sperr
 
 import (
 	"fmt"
+	"github.com/s4bb4t/lighthouse/core/levels"
 	"testing"
 )
 
 func TestSPError_Spin(t *testing.T) {
 	root := Api()
 
-	err := root.Spin(LevelHighUser)
+	err := root.Spin(levels.LevelHighUser)
 	fmt.Println(err)
 	fmt.Println()
 	fmt.Println()
-	err = root.Spin(LevelMediumDebug)
+	err = root.Spin(levels.LevelMediumDebug)
 	fmt.Println(err)
 	fmt.Println()
 	fmt.Println()
-	err = root.Spin(LevelDeepDebug)
+	err = root.Spin(levels.LevelDeepDebug)
 	fmt.Println(err)
 }
 
@@ -29,7 +30,7 @@ func Api() *SPError {
 		Desc:  "Internal Error",
 		Hint:  "Try Again later",
 		Path:  "api",
-		Level: LevelHighDebug,
+		Level: levels.LevelHighDebug,
 	})
 }
 func App() *SPError {
@@ -41,7 +42,7 @@ func App() *SPError {
 		Desc:  "Database error",
 		Hint:  "Check repo layer",
 		Path:  "app",
-		Level: LevelMediumDebug,
+		Level: levels.LevelMediumDebug,
 	})
 }
 
@@ -53,7 +54,7 @@ func DB() *SPError {
 		Desc:  "Failed to connect to database",
 		Hint:  "check connection string, credentials, etc.",
 		Path:  "Db",
-		Level: LevelDeepDebug,
+		Level: levels.LevelDeepDebug,
 	})
 }
 

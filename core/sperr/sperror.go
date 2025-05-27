@@ -3,6 +3,7 @@ package sperr
 import (
 	"crypto/sha256"
 	"fmt"
+	"github.com/s4bb4t/lighthouse/core/levels"
 	"hash"
 	"maps"
 	"time"
@@ -17,10 +18,10 @@ type (
 		hint     string            // how to resolve
 		path     string            // path/operation
 
-		id        hash.Hash  // UUID or content hash
-		httpCode  int        // HTTP status
-		level     ErrorLevel // error level
-		timestamp time.Time  // when occurred
+		id        hash.Hash         // UUID or content hash
+		httpCode  int               // HTTP status
+		level     levels.ErrorLevel // error level
+		timestamp time.Time         // when occurred
 
 		cause error          // nested error
 		stack []string       // stack trace
@@ -104,7 +105,7 @@ func (e *SPError) Code(httpCode int) *SPError {
 
 // Level sets the severity level of the error.
 // It accepts an ErrorLevel value and returns the modified SPError.
-func (e *SPError) Level(lvl ErrorLevel) *SPError {
+func (e *SPError) Level(lvl levels.ErrorLevel) *SPError {
 	e.level = lvl
 	return e
 }

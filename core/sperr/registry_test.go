@@ -1,6 +1,7 @@
 package sperr
 
 import (
+	"github.com/s4bb4t/lighthouse/core/levels"
 	"hash"
 	"reflect"
 	"testing"
@@ -25,7 +26,7 @@ func Test_registry_Get(t *testing.T) {
 				Hint:     "Please try again later - we are working on it.",
 				Path:     "",
 				HttpCode: 500,
-				Level:    LevelHighUser,
+				Level:    levels.LevelHighUser,
 			}),
 			wantErr: false,
 		},
@@ -78,7 +79,7 @@ func Test_registry_Reg(t *testing.T) {
 				Hint:     "test.",
 				Path:     "",
 				HttpCode: 200,
-				Level:    LevelHighUser,
+				Level:    levels.LevelHighUser,
 			}),
 			wantErr: false,
 		},

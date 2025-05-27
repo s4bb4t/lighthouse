@@ -1,5 +1,7 @@
 package sperr
 
+import "github.com/s4bb4t/lighthouse/core/levels"
+
 // Wrap wraps src into e's underlying SPError
 func (e *SPError) Wrap(src *SPError) *SPError {
 	if e.IsSP(src) {
@@ -12,7 +14,7 @@ func (e *SPError) Wrap(src *SPError) *SPError {
 }
 
 // Wrap wraps err into new-initialized SPError from provided Err
-func Wrap(err *SPError, f Err) *SPError {
+func Wrap(err *SPError, f Err) *SPError { // TODO: generic
 	h, _ := f.hash()
 	if cmpHashes(err.id, h) {
 		return err
@@ -40,7 +42,7 @@ func (e *SPError) Pop() *SPError {
 	return &r
 }
 
-func (e *SPError) Spin(lvl ErrorLevel) *SPError {
+func (e *SPError) Spin(lvl levels.ErrorLevel) *SPError {
 	var cp = &SPError{}
 	*cp = *e
 
@@ -53,7 +55,7 @@ func (e *SPError) Spin(lvl ErrorLevel) *SPError {
 
 	cnt := 0
 	switch lvl {
-	case LevelNoop:
+	case levels.LevelNoop:
 		return nil
 	default:
 		for head.level <= lvl {

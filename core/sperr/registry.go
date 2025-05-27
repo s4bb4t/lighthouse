@@ -1,6 +1,7 @@
 package sperr
 
 import (
+	"github.com/s4bb4t/lighthouse/core/levels"
 	"hash"
 	"sync"
 )
@@ -36,7 +37,7 @@ func init() {
 		Hint:     "Please try again later - we are working on it",
 		Path:     "",
 		HttpCode: 500,
-		Level:    LevelHighUser,
+		Level:    levels.LevelHighUser,
 	}))
 
 	NotFound, _ = Registry.Reg(SP(Err{
@@ -48,7 +49,7 @@ func init() {
 		Hint:     "Please check the URL and try again",
 		Path:     "",
 		HttpCode: 404,
-		Level:    LevelHighUser,
+		Level:    levels.LevelHighUser,
 	}))
 
 	BadRequest, _ = Registry.Reg(SP(Err{
@@ -60,7 +61,7 @@ func init() {
 		Hint:     "Please check your request parameters and try again",
 		Path:     "",
 		HttpCode: 400,
-		Level:    LevelHighUser,
+		Level:    levels.LevelHighUser,
 	}))
 
 	Unauthorized, _ = Registry.Reg(SP(Err{
@@ -72,7 +73,7 @@ func init() {
 		Hint:     "Please provide valid authentication credentials",
 		Path:     "",
 		HttpCode: 401,
-		Level:    LevelHighUser,
+		Level:    levels.LevelHighUser,
 	}))
 
 	Forbidden, _ = Registry.Reg(SP(Err{
@@ -84,7 +85,7 @@ func init() {
 		Hint:     "Please contact your administrator if you need access",
 		Path:     "",
 		HttpCode: 403,
-		Level:    LevelHighUser,
+		Level:    levels.LevelHighUser,
 	}))
 
 	Timeout, _ = Registry.Reg(SP(Err{
@@ -96,7 +97,7 @@ func init() {
 		Hint:     "Please try again. If the problem persists, contact support",
 		Path:     "",
 		HttpCode: 408,
-		Level:    LevelHighUser,
+		Level:    levels.LevelHighUser,
 	}))
 }
 
@@ -114,7 +115,7 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 			Hint:     "Please, check your code and provide a valid error",
 			Path:     "core/sperr/registry.go:103:1",
 			HttpCode: 400,
-			Level:    LevelHighDebug,
+			Level:    levels.LevelHighDebug,
 		})
 	}
 
@@ -129,7 +130,7 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 			Hint:     "Please, check your fields and provide a valid description, hint and EN message for your error",
 			Path:     "core/sperr/registry.go:103:1",
 			HttpCode: 400,
-			Level:    LevelHighDebug,
+			Level:    levels.LevelHighDebug,
 			Cause:    err,
 			Meta: map[string]any{
 				SPErrorKey: *e,
@@ -156,12 +157,15 @@ func (r *registry) Get(h hash.Hash) (*SPError, error) {
 			Hint:     "Please, check your hash ID or fact of error registration. Registration should be in init() function",
 			Path:     "core/sperr/registry.go:144:1",
 			HttpCode: 404,
-			Level:    LevelHighDebug,
+			Level:    levels.LevelHighDebug,
 			Meta: map[string]any{
 				HashKey: h,
 			},
 		})
 	}
 
-	return sp, nil
+	var cp *SPError
+	*cp = *sp
+
+	return cp, nil
 }

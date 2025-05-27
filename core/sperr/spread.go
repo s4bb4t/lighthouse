@@ -1,6 +1,9 @@
 package sperr
 
-import "maps"
+import (
+	"github.com/s4bb4t/lighthouse/core/levels"
+	"maps"
+)
 
 // AllMeta returns a copy of all metadata associated with the error.
 // The returned map is a new instance to prevent modification of the original metadata.
@@ -42,6 +45,6 @@ func (e *SPError) ReadCode() int {
 
 // ReadLevel returns the severity level of the error.
 // The level indicates how critical or severe the error is.
-func (e *SPError) ReadLevel() ErrorLevel {
+func (e *SPError) ReadLevel() levels.ErrorLevel {
 	return e.level
 }

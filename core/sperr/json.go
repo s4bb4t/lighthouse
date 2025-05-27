@@ -5,6 +5,7 @@ import (
 	"github.com/mailru/easyjson"
 	"github.com/mailru/easyjson/jlexer"
 	"github.com/mailru/easyjson/jwriter"
+	"github.com/s4bb4t/lighthouse/core/levels"
 )
 
 func (e *SPError) MarshalJSON() ([]byte, error) {
@@ -111,7 +112,7 @@ func (e *SPError) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		case "http_code":
 			e.httpCode = in.Int()
 		case "level":
-			e.level = ErrorLevel(in.Int())
+			e.level = levels.ErrorLevel(in.Int())
 		case "meta":
 			if in.IsNull() {
 				in.Skip()
