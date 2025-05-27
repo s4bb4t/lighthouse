@@ -27,73 +27,73 @@ var (
 func init() {
 	Registry.errs = make(map[hash.Hash]*SPError)
 
-	Internal, _ = Registry.Reg(SP(Fields{
+	Internal, _ = Registry.Reg(SP(Err{
 		Messages: map[string]string{
 			En: "Internal server error",
 			Ru: "Ошибка сервера",
 		},
-		Desc:     "Internal server error. We are sorry for the inconvenience.",
-		Hint:     "Please try again later - we are working on it.",
+		Desc:     "Internal server error. We are sorry for the inconvenience",
+		Hint:     "Please try again later - we are working on it",
 		Path:     "",
 		HttpCode: 500,
 		Level:    LevelHighUser,
 	}))
 
-	NotFound, _ = Registry.Reg(SP(Fields{
+	NotFound, _ = Registry.Reg(SP(Err{
 		Messages: map[string]string{
 			En: "Resource not found",
 			Ru: "Ресурс не найден",
 		},
-		Desc:     "The requested resource could not be found on this server.",
-		Hint:     "Please check the URL and try again.",
+		Desc:     "The requested resource could not be found on this server",
+		Hint:     "Please check the URL and try again",
 		Path:     "",
 		HttpCode: 404,
 		Level:    LevelHighUser,
 	}))
 
-	BadRequest, _ = Registry.Reg(SP(Fields{
+	BadRequest, _ = Registry.Reg(SP(Err{
 		Messages: map[string]string{
 			En: "Bad request",
 			Ru: "Неверный запрос",
 		},
-		Desc:     "The request could not be understood by the server due to malformed syntax.",
-		Hint:     "Please check your request parameters and try again.",
+		Desc:     "The request could not be understood by the server due to malformed syntax",
+		Hint:     "Please check your request parameters and try again",
 		Path:     "",
 		HttpCode: 400,
 		Level:    LevelHighUser,
 	}))
 
-	Unauthorized, _ = Registry.Reg(SP(Fields{
+	Unauthorized, _ = Registry.Reg(SP(Err{
 		Messages: map[string]string{
 			En: "Unauthorized",
 			Ru: "Не авторизован",
 		},
-		Desc:     "Authentication is required and has failed or has not been provided.",
-		Hint:     "Please provide valid authentication credentials.",
+		Desc:     "Authentication is required and has failed or has not been provided",
+		Hint:     "Please provide valid authentication credentials",
 		Path:     "",
 		HttpCode: 401,
 		Level:    LevelHighUser,
 	}))
 
-	Forbidden, _ = Registry.Reg(SP(Fields{
+	Forbidden, _ = Registry.Reg(SP(Err{
 		Messages: map[string]string{
 			En: "Forbidden",
 			Ru: "Доступ запрещен",
 		},
-		Desc:     "You don't have permission to access this resource.",
-		Hint:     "Please contact your administrator if you need access.",
+		Desc:     "You don't have permission to access this resource",
+		Hint:     "Please contact your administrator if you need access",
 		Path:     "",
 		HttpCode: 403,
 		Level:    LevelHighUser,
 	}))
 
-	Timeout, _ = Registry.Reg(SP(Fields{
+	Timeout, _ = Registry.Reg(SP(Err{
 		Messages: map[string]string{
 			En: "Request timeout",
 			Ru: "Время ожидания истекло",
 		},
-		Desc:     "The server timed out waiting for the request.",
-		Hint:     "Please try again. If the problem persists, contact support.",
+		Desc:     "The server timed out waiting for the request",
+		Hint:     "Please try again. If the problem persists, contact support",
 		Path:     "",
 		HttpCode: 408,
 		Level:    LevelHighUser,
@@ -105,7 +105,7 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 	defer r.Unlock()
 
 	if e == nil {
-		return nil, SP(Fields{
+		return nil, SP(Err{
 			Messages: map[string]string{
 				En: "Nil error provided",
 				Ru: "передана nil ошибка",
@@ -120,7 +120,7 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 
 	h, err := e.Done()
 	if err != nil {
-		return nil, SP(Fields{
+		return nil, SP(Err{
 			Messages: map[string]string{
 				En: "Failed to validate SPError",
 				Ru: "Ошибка в процессе валидации SPError",
@@ -147,7 +147,7 @@ func (r *registry) Get(h hash.Hash) (*SPError, error) {
 
 	sp, ok := r.errs[h]
 	if !ok {
-		return nil, SP(Fields{
+		return nil, SP(Err{
 			Messages: map[string]string{
 				En: "No such error",
 				Ru: "Такой ошибки не существует",

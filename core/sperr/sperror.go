@@ -37,8 +37,8 @@ func NewSpErr() *SPError {
 	return &SPError{}
 }
 
-// SP constructs and returns a new SPError based on the provided Fields, copying messages and meta along with validation.
-func SP(f Fields) *SPError {
+// SP constructs and returns a new SPError based on the provided Err, copying messages and meta along with validation.
+func SP(f Err) *SPError {
 	sp := NewSpErr()
 
 	if sp.messages == nil {
@@ -131,9 +131,14 @@ func (e *SPError) Done() (hash.Hash, error) {
 
 // Error returns the SPError's description.
 func (e *SPError) Error() string {
-	return e.desc
+	return e.desc + ": " + e.hint
 }
 
 func (e *SPError) Unwrap() error {
 	return e.cause
+}
+
+func Cast(err error) (*SPError, bool) {
+	e, b := err.(*SPError)
+	return e, b
 }

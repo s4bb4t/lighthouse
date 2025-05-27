@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/sperr.iml" filepath="$PROJECT_DIR$/.idea/sperr.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/lighthouse.iml" filepath="$PROJECT_DIR$/.idea/lighthouse.iml" />
     </modules>
   </component>
 </project>

@@ -1,4 +1,4 @@
-module github.com/s4bb4t/sperr
+module github.com/s4bb4t/lighthouse
 
 go 1.24.3
 

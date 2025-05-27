@@ -16,7 +16,7 @@ func Test_registry_Get(t *testing.T) {
 		{
 			name: "Normal - Internal",
 			h:    Internal,
-			want: SP(Fields{
+			want: SP(Err{
 				Messages: map[string]string{
 					En: "Internal server error",
 					Ru: "Ошибка сервера",
@@ -69,7 +69,7 @@ func Test_registry_Reg(t *testing.T) {
 		},
 		{
 			name: "Normal",
-			err: SP(Fields{
+			err: SP(Err{
 				Messages: map[string]string{
 					En: "test",
 					Ru: "test",

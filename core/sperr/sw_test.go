@@ -22,7 +22,7 @@ func TestSPError_Spin(t *testing.T) {
 
 func Api() *SPError {
 	err := App()
-	return Wrap(err, Fields{
+	return Wrap(err, Err{
 		Messages: map[string]string{
 			En: "Internal",
 		},
@@ -34,7 +34,7 @@ func Api() *SPError {
 }
 func App() *SPError {
 	err := DB()
-	return Wrap(err, Fields{
+	return Wrap(err, Err{
 		Messages: map[string]string{
 			En: "App err",
 		},
@@ -46,7 +46,7 @@ func App() *SPError {
 }
 
 func DB() *SPError {
-	return SP(Fields{
+	return SP(Err{
 		Messages: map[string]string{
 			En: "Db connection failed",
 		},
@@ -58,7 +58,7 @@ func DB() *SPError {
 }
 
 func TestWrap(t *testing.T) {
-	spFirst := SP(Fields{
+	spFirst := SP(Err{
 		Messages: map[string]string{
 			En: "Error message",
 		},
@@ -67,7 +67,7 @@ func TestWrap(t *testing.T) {
 		Path: "TestUsage()",
 	})
 
-	t.Log(Wrap(spFirst, Fields{
+	t.Log(Wrap(spFirst, Err{
 		Messages: map[string]string{
 			En: "error message",
 		},
@@ -78,7 +78,7 @@ func TestWrap(t *testing.T) {
 }
 
 func TestWrapMethod(t *testing.T) {
-	spFirst := SP(Fields{
+	spFirst := SP(Err{
 		Messages: map[string]string{
 			En: "Error message",
 		},
@@ -86,7 +86,7 @@ func TestWrapMethod(t *testing.T) {
 		Hint: "Delete system32",
 		Path: "TestUsage()",
 	})
-	spSecond := SP(Fields{
+	spSecond := SP(Err{
 		Messages: map[string]string{
 			En: "error message",
 		},

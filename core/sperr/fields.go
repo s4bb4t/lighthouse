@@ -5,7 +5,7 @@ import (
 	"hash"
 )
 
-type Fields struct {
+type Err struct {
 	Messages map[string]string // localized message
 	Desc     string            // detailed description
 	Hint     string            // how to resolve
@@ -18,7 +18,7 @@ type Fields struct {
 	Meta  map[string]any // arbitrary fields (user_id, trace_id, etc.)
 }
 
-func (f Fields) hash() (hash.Hash, error) {
+func (f Err) hash() (hash.Hash, error) {
 	h := sha256.New()
 	_, err := h.Write([]byte(f.Desc + f.Hint + f.Messages[En]))
 	return h, err

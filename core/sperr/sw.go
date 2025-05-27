@@ -1,7 +1,5 @@
 package sperr
 
-import "fmt"
-
 // Wrap wraps src into e's underlying SPError
 func (e *SPError) Wrap(src *SPError) *SPError {
 	if e.IsSP(src) {
@@ -13,8 +11,8 @@ func (e *SPError) Wrap(src *SPError) *SPError {
 	return e
 }
 
-// Wrap wraps err into new-initialized SPError from provided Fields
-func Wrap(err *SPError, f Fields) *SPError {
+// Wrap wraps err into new-initialized SPError from provided Err
+func Wrap(err *SPError, f Err) *SPError {
 	h, _ := f.hash()
 	if cmpHashes(err.id, h) {
 		return err
@@ -50,41 +48,22 @@ func (e *SPError) Spin(lvl ErrorLevel) *SPError {
 	head = cp.Pop()
 	ls = head
 	if head.level > lvl {
-		return nil
+		return Registry.errs[Internal]
 	}
 
 	cnt := 0
 	switch lvl {
 	case LevelNoop:
 		return nil
-	case LevelHighUser, LevelMediumUser, LevelLowUser:
-		// TODO: make hints for users only
-		// TODO: user data retrieving from meta
-		return ls
-	case LevelInfo, LevelWarn, LevelError:
-		return ls
-	case LevelHighDebug, LevelMediumDebug, LevelDeepDebug:
-		// TODO: stack trace
-		// TODO: All provided data from meta
+	default:
 		for head.level <= lvl {
 			ls = head
-
-			// TODO: Log ---------------------------------------------------
-			for range cnt {
-				fmt.Print(" ")
-			}
-			fmt.Printf("%s: %s: %s", head.path, head.desc, head.hint)
-			fmt.Println()
-			// TODO: Log ---------------------------------------------------
-
 			head = cp.Pop()
 			if head == nil {
 				break
 			}
 			cnt += 5
 		}
-		return ls
-	default:
 		return ls
 	}
 }
