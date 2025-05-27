@@ -13,7 +13,8 @@ func (e *SPError) Is(err error) bool {
 	return errors.Is(e.cause, err)
 }
 
-// DeepIs tries to find err in whole SPError chain
+// DeepIs traverses the entire SPError chain to find a matching error. Returns true if
+// the provided error is found anywhere in the chain.
 func (e *SPError) DeepIs(err error) bool {
 	var cp = &SPError{}
 	*cp = *e
