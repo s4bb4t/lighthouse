@@ -80,6 +80,10 @@ func (e *SPError) Caused(err error) *SPError {
 
 // Msg sets the localized message for the given language.
 func (e *SPError) Msg(lg, msg string) *SPError {
+	if e.messages == nil {
+		e.messages = make(map[string]string)
+	}
+
 	e.messages[lg] = msg
 	return e
 }
