@@ -112,7 +112,7 @@ func (e *SPError) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		case "http_code":
 			e.httpCode = in.Int()
 		case "level":
-			e.level = levels.ErrorLevel(in.Int())
+			e.level = levels.Level(in.Int())
 		case "meta":
 			if in.IsNull() {
 				in.Skip()

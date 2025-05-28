@@ -1,16 +1,16 @@
 package levels
 
-type ErrorLevel uint8
+type Level uint8
 
 const (
-	LevelDeepDebug   ErrorLevel = 255 // the highest debug error level
-	LevelMediumDebug ErrorLevel = 128
-	LevelHighDebug   ErrorLevel = 64
-	LevelError       ErrorLevel = 32
-	LevelWarn        ErrorLevel = 16
-	LevelInfo        ErrorLevel = 8
-	LevelLowUser     ErrorLevel = 4
-	LevelMediumUser  ErrorLevel = 2
-	LevelHighUser    ErrorLevel = 1
-	LevelNoop        ErrorLevel = 0 // no errors
+	LevelDeepDebug   Level = 255 // the highest debug error level
+	LevelMediumDebug Level = 128
+	LevelHighDebug   Level = 64
+	LevelError       Level = 32
+	LevelWarn        Level = 16
+	LevelInfo        Level = 8
+	LevelLowUser     Level = 4
+	LevelMediumUser  Level = 2
+	LevelHighUser    Level = 1
+	LevelNoop        Level = 0 // no errors
 )

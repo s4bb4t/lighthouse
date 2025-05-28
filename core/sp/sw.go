@@ -2,7 +2,7 @@ package sp
 
 import "github.com/s4bb4t/lighthouse/core/levels"
 
-// TODO: implement function that retrieve whole path of error based on ErrorLevel
+// TODO: implement function that retrieve whole path of error based on Level
 
 // Wrap wraps src into e's underlying SPError
 func (e *SPError) Wrap(src *SPError) *SPError {
@@ -65,7 +65,7 @@ func (e *SPError) Pop() *SPError {
 // Spin processes the error chain until reaching a specified error level.
 // Returns the last error that matches the specified level.
 // If the initial error level is higher than required, returns an Internal error.
-func (e *SPError) Spin(lvl levels.ErrorLevel) *SPError {
+func (e *SPError) Spin(lvl levels.Level) *SPError {
 	if lvl == levels.LevelNoop {
 		return nil
 	}
