@@ -136,7 +136,7 @@ func (e *SPError) Done() (hash.Hash, error) {
 
 // MustDone generates a hash ID based on the SPError's fields
 // SPError can't be used without calling Done()
-func (e *SPError) MustDone() hash.Hash {
+func (e *SPError) MustDone() *SPError {
 	if e == nil || e.desc == "" || e.messages[En] == "" {
 		panic("do not use empty sperror: it may cause misundertstanings")
 	}
@@ -147,7 +147,7 @@ func (e *SPError) MustDone() hash.Hash {
 	if err != nil {
 		panic(err)
 	}
-	return e.id
+	return e
 }
 
 // Error returns the SPError's description.
