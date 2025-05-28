@@ -12,8 +12,8 @@ type Err struct {
 	Hint     string            // how to resolve
 	Path     string            // path/operation
 
-	HttpCode int               // HTTP status
-	Level    levels.ErrorLevel // error level
+	HttpCode int          // HTTP status
+	Level    levels.Level // error level
 
 	Cause error          // nested error
 	Meta  map[string]any // arbitrary fields (user_id, trace_id, etc.)

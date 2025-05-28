@@ -18,10 +18,10 @@ type (
 		hint     string            // how to resolve
 		path     string            // path/operation
 
-		id        hash.Hash         // UUID or content hash
-		httpCode  int               // HTTP status
-		level     levels.ErrorLevel // error level
-		timestamp time.Time         // when occurred
+		id        hash.Hash    // UUID or content hash
+		httpCode  int          // HTTP status
+		level     levels.Level // error level
+		timestamp time.Time    // when occurred
 
 		cause error          // nested error
 		stack []string       // stack trace
@@ -104,8 +104,8 @@ func (e *SPError) Code(httpCode int) *SPError {
 }
 
 // Level sets the severity level of the error.
-// It accepts an ErrorLevel value and returns the modified SPError.
-func (e *SPError) Level(lvl levels.ErrorLevel) *SPError {
+// It accepts an Level value and returns the modified SPError.
+func (e *SPError) Level(lvl levels.Level) *SPError {
 	e.level = lvl
 	return e
 }
@@ -127,7 +127,27 @@ func (e *SPError) Done() (hash.Hash, error) {
 	e.timestamp = time.Now()
 	e.id = sha256.New()
 	_, err := e.id.Write([]byte(e.desc + e.hint + e.messages[En]))
+	if err != nil {
+		return nil, err
+	}
+
 	return e.id, err
+}
+
+// MustDone generates a hash ID based on the SPError's fields
+// SPError can't be used without calling Done()
+func (e *SPError) MustDone() hash.Hash {
+	if e == nil || e.desc == "" || e.messages[En] == "" {
+		panic("do not use empty sperror: it may cause misundertstanings")
+	}
+
+	e.timestamp = time.Now()
+	e.id = sha256.New()
+	_, err := e.id.Write([]byte(e.desc + e.hint + e.messages[En]))
+	if err != nil {
+		panic(err)
+	}
+	return e.id
 }
 
 // Error returns the SPError's description.
@@ -184,7 +204,7 @@ func (e *SPError) ReadCode() int {
 
 // ReadLevel returns the severity level of the error.
 // The level indicates how critical or severe the error is.
-func (e *SPError) ReadLevel() levels.ErrorLevel {
+func (e *SPError) ReadLevel() levels.Level {
 	return e.level
 }
 

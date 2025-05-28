@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func Zap(err *sp.SPError, lvl levels.ErrorLevel) []zapcore.Field {
+func Zap(err *sp.SPError, lvl levels.Level) []zapcore.Field {
 	var f []zapcore.Field
 
 	f = append(f, zap.String("path", path))
