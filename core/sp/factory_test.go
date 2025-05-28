@@ -1,18 +1,19 @@
 package sp
 
 import (
+	"fmt"
 	"testing"
 )
 
 func TestSPError_Done(t *testing.T) {
 	tests := []struct {
 		name      string
-		spError   *SPError
+		spError   *Error
 		expectErr bool
 	}{
 		{
 			name: "valid hash write",
-			spError: &SPError{
+			spError: &Error{
 				desc: "description",
 				hint: "hint",
 				messages: map[string]string{
@@ -23,7 +24,7 @@ func TestSPError_Done(t *testing.T) {
 		},
 		{
 			name: "valid hash write",
-			spError: &SPError{
+			spError: &Error{
 				desc: "description1",
 				hint: "hint",
 				messages: map[string]string{
@@ -34,7 +35,7 @@ func TestSPError_Done(t *testing.T) {
 		},
 		{
 			name:      "empty",
-			spError:   &SPError{},
+			spError:   &Error{},
 			expectErr: true,
 		},
 	}
@@ -46,6 +47,7 @@ func TestSPError_Done(t *testing.T) {
 				t.Errorf("Done() error = %v, expectErr %v", err, tt.expectErr)
 			} else if err == nil {
 				t.Log(string(tt.spError.id.Sum(nil)))
+				fmt.Println(tt.spError.ReadPath())
 			}
 		})
 	}
@@ -54,20 +56,20 @@ func TestSPError_Done(t *testing.T) {
 //func TestSPError_IsSP(t *testing.T) {
 //	tests := []struct {
 //		name     string
-//		spError1 *SPError
-//		spError2 *SPError
+//		spError1 *Error
+//		spError2 *Error
 //		wantBool bool
 //	}{
 //		{
 //			name: "same hash write",
-//			spError1: &SPError{
+//			spError1: &Error{
 //				messages: map[string]string{
 //					En: "error message",
 //				},
 //				desc: "description",
 //				hint: "hint",
 //			},
-//			spError2: &SPError{
+//			spError2: &Error{
 //				messages: map[string]string{
 //					En: "error message",
 //				},
@@ -78,14 +80,14 @@ func TestSPError_Done(t *testing.T) {
 //		},
 //		{
 //			name: "valid hash write",
-//			spError1: &SPError{
+//			spError1: &Error{
 //				messages: map[string]string{
 //					En: "error message",
 //				},
 //				desc: "description",
 //				hint: "hint",
 //			},
-//			spError2: &SPError{
+//			spError2: &Error{
 //				messages: map[string]string{
 //					En: "error message1",
 //				},

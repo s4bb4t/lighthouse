@@ -10,13 +10,14 @@ func TestSPError_Spin(t *testing.T) {
 	root := Api()
 
 	err := root.Spin(levels.LevelMediumDebug)
-	fmt.Println(err)
-	fmt.Println()
-	err = root.Spin(levels.LevelDeepDebug)
-	fmt.Println(err)
+	fmt.Println(err.ReadPath())
+
+	b, _ := err.MarshalJSON()
+
+	fmt.Println(string(b))
 }
 
-func Api() *SPError {
+func Api() *Error {
 	err := App()
 	return Wrap(err, Err{
 		Messages: map[string]string{
@@ -26,9 +27,10 @@ func Api() *SPError {
 		Hint:  "Try Again later",
 		Path:  "api",
 		Level: levels.LevelHighDebug,
-	})
+	}).MustDone()
 }
-func App() *SPError {
+
+func App() *Error {
 	err := DB()
 	return Wrap(err, Err{
 		Messages: map[string]string{
@@ -38,10 +40,10 @@ func App() *SPError {
 		Hint:  "Check repo layer",
 		Path:  "app",
 		Level: levels.LevelMediumDebug,
-	})
+	}).MustDone()
 }
 
-func DB() *SPError {
+func DB() *Error {
 	return SP(Err{
 		Messages: map[string]string{
 			En: "Db connection failed",
@@ -50,7 +52,7 @@ func DB() *SPError {
 		Hint:  "check connection string, credentials, etc.",
 		Path:  "Db",
 		Level: levels.LevelDeepDebug,
-	})
+	}).MustDone()
 }
 
 func TestWrap(t *testing.T) {
@@ -61,7 +63,7 @@ func TestWrap(t *testing.T) {
 		Desc: "First Error",
 		Hint: "Delete system32",
 		Path: "TestUsage()",
-	})
+	}).MustDone()
 
 	t.Log(Wrap(spFirst, Err{
 		Messages: map[string]string{

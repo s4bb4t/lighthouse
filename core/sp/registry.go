@@ -7,10 +7,10 @@ import (
 )
 
 type (
-	// registry stores and manages SPError instances with thread-safe access.
+	// registry stores and manages Error instances with thread-safe access.
 	// it uses a hash-based mapping to store errors and includes a mutex for concurrent operations.
 	registry struct {
-		errs map[hash.Hash]*SPError
+		errs map[hash.Hash]*Error
 		sync.RWMutex
 	}
 )
@@ -26,7 +26,7 @@ var (
 )
 
 func init() {
-	Registry.errs = make(map[hash.Hash]*SPError)
+	Registry.errs = make(map[hash.Hash]*Error)
 
 	Internal, _ = Registry.Reg(SP(Err{
 		Messages: map[string]string{
@@ -101,7 +101,7 @@ func init() {
 	}))
 }
 
-func (r *registry) Reg(e *SPError) (hash.Hash, error) {
+func (r *registry) Reg(e *Error) (hash.Hash, error) {
 	r.Lock()
 	defer r.Unlock()
 
@@ -119,12 +119,12 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 		})
 	}
 
-	h, err := e.Done()
+	h, err := e.done()
 	if err != nil {
 		return nil, SP(Err{
 			Messages: map[string]string{
-				En: "Failed to validate SPError",
-				Ru: "Ошибка в процессе валидации SPError",
+				En: "Failed to validate Error",
+				Ru: "Ошибка в процессе валидации Error",
 			},
 			Desc:     "Failed to create hash id of your error. It happens when you try to register an error with an empty description. Provided data of error in Meta",
 			Hint:     "Please, check your fields and provide a valid description, hint and EN message for your error",
@@ -142,7 +142,7 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 	return h, nil
 }
 
-func (r *registry) Get(h hash.Hash) *SPError {
+func (r *registry) Get(h hash.Hash) *Error {
 	r.RLock()
 	defer r.RUnlock()
 
@@ -151,7 +151,7 @@ func (r *registry) Get(h hash.Hash) *SPError {
 		return nil
 	}
 
-	cp := &SPError{}
+	cp := &Error{}
 	*cp = *sp
 
 	return cp

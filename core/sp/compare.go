@@ -9,17 +9,17 @@ import (
 // Is returns true if the error is the same as err. Implements the errors.Is
 // interface for error comparison. It returns true if the error's cause matches
 // the provided error.
-func (e *SPError) Is(err error) bool {
+func (e *Error) Is(err error) bool {
 	return errors.Is(e.cause, err)
 }
 
-// DeepIs traverses the entire SPError chain to find a matching error. Returns true if
+// DeepIs traverses the entire Error chain to find a matching error. Returns true if
 // the provided error is found anywhere in the chain.
-func (e *SPError) DeepIs(err error) bool {
-	var cp = &SPError{}
+func (e *Error) DeepIs(err error) bool {
+	var cp = &Error{}
 	*cp = *e
 
-	var head *SPError
+	var head *Error
 	for {
 		head = cp.Pop()
 		if head == nil {
@@ -36,7 +36,7 @@ func (e *SPError) DeepIs(err error) bool {
 // IsSP compares two SPErrors by their hash IDs.
 // It returns true if both errors have the same hash ID.
 // IsSP compares hashes of SpErrors, not their values or descriptions.
-func (e *SPError) IsSP(err *SPError) bool {
+func (e *Error) IsSP(err *Error) bool {
 	return slices.Compare(e.id.Sum(nil), err.id.Sum(nil)) == 0
 }
 

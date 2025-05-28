@@ -9,11 +9,13 @@ import (
 )
 
 func TestZap(t *testing.T) {
-	zap.NewNop().Error("test", Zap(Api(), levels.LevelHighUser)...)
-	fmt.Println(Zap(Api(), levels.LevelHighUser))
+	zap.NewNop().Error("test", Zap(Api(), levels.LevelMediumDebug)...)
+	for _, v := range Zap(Api(), levels.LevelMediumDebug) {
+		fmt.Println(v)
+	}
 }
 
-func Api() *sp.SPError {
+func Api() *sp.Error {
 	err := App()
 	return sp.Wrap(err, sp.Err{
 		Messages: map[string]string{
@@ -23,9 +25,9 @@ func Api() *sp.SPError {
 		Hint:  "Try Again later",
 		Path:  "api",
 		Level: levels.LevelHighDebug,
-	})
+	}).MustDone()
 }
-func App() *sp.SPError {
+func App() *sp.Error {
 	err := DB()
 	return sp.Wrap(err, sp.Err{
 		Messages: map[string]string{
@@ -35,10 +37,10 @@ func App() *sp.SPError {
 		Hint:  "Check repo layer",
 		Path:  "app",
 		Level: levels.LevelMediumDebug,
-	})
+	}).MustDone()
 }
 
-func DB() *sp.SPError {
+func DB() *sp.Error {
 	return sp.SP(sp.Err{
 		Messages: map[string]string{
 			sp.En: "Db connection failed",
@@ -47,5 +49,5 @@ func DB() *sp.SPError {
 		Hint:  "check connection string, credentials, etc.",
 		Path:  "Db",
 		Level: levels.LevelDeepDebug,
-	})
+	}).MustDone()
 }

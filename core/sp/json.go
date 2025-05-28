@@ -8,13 +8,13 @@ import (
 	"github.com/s4bb4t/lighthouse/core/levels"
 )
 
-func (e *SPError) MarshalJSON() ([]byte, error) {
+func (e *Error) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
 	e.MarshalEasyJSON(&w)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
-func (e *SPError) MarshalEasyJSON(w *jwriter.Writer) {
+func (e *Error) MarshalEasyJSON(w *jwriter.Writer) {
 	w.RawByte('{')
 	w.RawString(`"messages":`)
 	if e.messages == nil {
@@ -40,39 +40,50 @@ func (e *SPError) MarshalEasyJSON(w *jwriter.Writer) {
 	w.RawString(`"hint":`)
 	w.String(e.hint)
 	w.RawByte(',')
-	w.RawString(`"http_code":`)
-	w.Int(e.httpCode)
+	w.RawString(`"path":`)
+	w.String(e.path)
+
+	if e.httpCode != 0 {
+		w.RawByte(',')
+		w.RawString(`"http_code":`)
+		w.Int(e.httpCode)
+	}
+
 	w.RawByte(',')
 	w.RawString(`"level":`)
 	w.Int(int(e.level))
-	w.RawByte(',')
-	w.RawString(`"meta":`)
-	if e.meta == nil {
-		w.RawString(`null`)
-	} else {
-		w.RawByte('{')
-		v2First := true
-		for v2Name, v2Value := range e.meta {
-			if !v2First {
-				w.RawByte(',')
+
+	if len(e.meta) != 0 {
+		w.RawByte(',')
+		w.RawString(`"meta":`)
+		if e.meta == nil {
+			w.RawString(`null`)
+		} else {
+			w.RawByte('{')
+			v2First := true
+			for v2Name, v2Value := range e.meta {
+				if !v2First {
+					w.RawByte(',')
+				}
+				v2First = false
+				w.String(v2Name)
+				w.RawByte(':')
+				w.Raw(json.Marshal(v2Value))
 			}
-			v2First = false
-			w.String(v2Name)
-			w.RawByte(':')
-			w.Raw(json.Marshal(v2Value))
+			w.RawByte('}')
 		}
-		w.RawByte('}')
 	}
+
 	w.RawByte('}')
 }
 
-func (e *SPError) UnmarshalJSON(data []byte) error {
+func (e *Error) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
 	e.UnmarshalEasyJSON(&r)
 	return r.Error()
 }
 
-func (e *SPError) UnmarshalEasyJSON(in *jlexer.Lexer) {
+func (e *Error) UnmarshalEasyJSON(in *jlexer.Lexer) {
 	if in.IsNull() {
 		in.Skip()
 		return
@@ -109,6 +120,8 @@ func (e *SPError) UnmarshalEasyJSON(in *jlexer.Lexer) {
 			e.desc = in.String()
 		case "hint":
 			e.hint = in.String()
+		case "path":
+			e.path = in.String()
 		case "http_code":
 			e.httpCode = in.Int()
 		case "level":

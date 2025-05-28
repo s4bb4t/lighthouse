@@ -10,7 +10,7 @@ func TestSPError_DeepIs(t *testing.T) {
 	tests := []struct {
 		name string
 		args error
-		err  *SPError
+		err  *Error
 		want bool
 	}{
 		{
@@ -47,7 +47,7 @@ func TestSPError_Is(t *testing.T) {
 	tests := []struct {
 		name string
 		err  error
-		args *SPError
+		args *Error
 		want bool
 	}{
 		{
@@ -91,8 +91,8 @@ func TestSPError_Is(t *testing.T) {
 func TestSPError_IsSP(t *testing.T) {
 	tests := []struct {
 		name string
-		sp1  *SPError
-		sp2  *SPError
+		sp1  *Error
+		sp2  *Error
 		want bool
 	}{
 		{

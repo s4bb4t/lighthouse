@@ -11,7 +11,7 @@ func Test_registry_Get(t *testing.T) {
 	tests := []struct {
 		name    string
 		h       hash.Hash
-		want    *SPError
+		want    *Error
 		wantErr bool
 	}{
 		{
@@ -51,7 +51,7 @@ func Test_registry_Get(t *testing.T) {
 func Test_registry_Reg(t *testing.T) {
 	tests := []struct {
 		name    string
-		err     *SPError
+		err     *Error
 		want    hash.Hash
 		wantErr bool
 	}{

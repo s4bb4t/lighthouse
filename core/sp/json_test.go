@@ -10,13 +10,13 @@ import (
 func TestMarshalEasyJSON(t *testing.T) {
 	tests := []struct {
 		name    string
-		spErr   *SPError
+		spErr   *Error
 		want    string
 		wantErr bool
 	}{
 		{
 			name: "nil_fields",
-			spErr: &SPError{
+			spErr: &Error{
 				messages: nil,
 				meta:     nil,
 			},
@@ -25,7 +25,7 @@ func TestMarshalEasyJSON(t *testing.T) {
 		},
 		{
 			name: "populated_fields",
-			spErr: &SPError{
+			spErr: &Error{
 				messages: map[string]string{"en": "error message", "fr": "message d'erreur"},
 				desc:     "Test description",
 				hint:     "Test hint",
@@ -38,7 +38,7 @@ func TestMarshalEasyJSON(t *testing.T) {
 		},
 		{
 			name: "empty_messages",
-			spErr: &SPError{
+			spErr: &Error{
 				messages: map[string]string{},
 				desc:     "Empty messages",
 				meta:     map[string]any{"key": "value"},
@@ -48,7 +48,7 @@ func TestMarshalEasyJSON(t *testing.T) {
 		},
 		{
 			name: "meta_is_empty_map",
-			spErr: &SPError{
+			spErr: &Error{
 				messages: map[string]string{"en": "error"},
 				meta:     map[string]any{},
 			},
@@ -57,7 +57,7 @@ func TestMarshalEasyJSON(t *testing.T) {
 		},
 		{
 			name: "special_characters_in_messages",
-			spErr: &SPError{
+			spErr: &Error{
 				messages: map[string]string{"en": "Error \"message\" with special JSON: {} [] chars"},
 				desc:     "Special characters description",
 				hint:     "Special characters hint",
