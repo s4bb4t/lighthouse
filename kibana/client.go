@@ -27,7 +27,7 @@ func NewClient(cfg Config) *Client {
 		},
 	}
 
-	go c.startFlushing()
+	go c.startFlushing(false)
 	return c
 }
 
