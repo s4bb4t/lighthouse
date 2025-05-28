@@ -1,4 +1,4 @@
-package sperr
+package sp
 
 import (
 	"github.com/s4bb4t/lighthouse/core/levels"
@@ -39,14 +39,7 @@ func Test_registry_Get(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Registry.Get(tt.h)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			} else if err != nil {
-				t.Log(err)
-				return
-			}
+			got := Registry.Get(tt.h)
 			if !got.IsSP(tt.want) {
 				t.Errorf("Get() got = %v, want %v", got, tt.want)
 			}

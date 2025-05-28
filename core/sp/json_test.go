@@ -1,4 +1,4 @@
-package sperr
+package sp
 
 import (
 	"github.com/s4bb4t/lighthouse/core/levels"

@@ -1,4 +1,4 @@
-package sperr
+package sp
 
 const (
 	SPErrorKey = "sperror"

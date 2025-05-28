@@ -1,4 +1,4 @@
-package sperr
+package sp
 
 import (
 	"crypto/sha256"
@@ -68,7 +68,7 @@ func SP(f Err) *SPError {
 
 // Path appends the operation name to the path.
 func (e *SPError) Path(path string) *SPError {
-	e.path = path
+	e.path = path + e.path
 	return e
 }
 
@@ -186,4 +186,12 @@ func (e *SPError) ReadCode() int {
 // The level indicates how critical or severe the error is.
 func (e *SPError) ReadLevel() levels.ErrorLevel {
 	return e.level
+}
+
+func (e *SPError) ReadPath() string {
+	return e.path
+}
+
+func (e *SPError) ReadTime() time.Time {
+	return e.timestamp
 }

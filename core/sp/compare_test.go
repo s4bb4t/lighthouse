@@ -1,4 +1,4 @@
-package sperr
+package sp
 
 import (
 	"database/sql"

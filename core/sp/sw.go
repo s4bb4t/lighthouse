@@ -1,6 +1,8 @@
-package sperr
+package sp
 
 import "github.com/s4bb4t/lighthouse/core/levels"
+
+// TODO: implement function that retrieve whole path of error based on ErrorLevel
 
 // Wrap wraps src into e's underlying SPError
 func (e *SPError) Wrap(src *SPError) *SPError {
@@ -13,7 +15,7 @@ func (e *SPError) Wrap(src *SPError) *SPError {
 	return e
 }
 
-// Wrap wraps err into new-initialized SPError from provided Err or existing SPError.
+// Wrap wraps `src` into new-initialized SPError from provided Err or existing SPError.
 // It returns dest if src matches its hash, otherwise wraps src into dest.
 func Wrap(src *SPError, dst any) *SPError {
 	switch v := dst.(type) {

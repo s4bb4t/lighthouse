@@ -1,4 +1,4 @@
-package sperr
+package sp
 
 import (
 	"github.com/s4bb4t/lighthouse/core/levels"
@@ -113,7 +113,7 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 			},
 			Desc:     "Provided error is nil. This is not allowed)",
 			Hint:     "Please, check your code and provide a valid error",
-			Path:     "core/sperr/registry.go:103:1",
+			Path:     "core/sp/registry.go:103:1",
 			HttpCode: 400,
 			Level:    levels.LevelHighDebug,
 		})
@@ -128,7 +128,7 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 			},
 			Desc:     "Failed to create hash id of your error. It happens when you try to register an error with an empty description. Provided data of error in Meta",
 			Hint:     "Please, check your fields and provide a valid description, hint and EN message for your error",
-			Path:     "core/sperr/registry.go:103:1",
+			Path:     "core/sp/registry.go:103:1",
 			HttpCode: 400,
 			Level:    levels.LevelHighDebug,
 			Cause:    err,
@@ -142,30 +142,17 @@ func (r *registry) Reg(e *SPError) (hash.Hash, error) {
 	return h, nil
 }
 
-func (r *registry) Get(h hash.Hash) (*SPError, error) {
+func (r *registry) Get(h hash.Hash) *SPError {
 	r.RLock()
 	defer r.RUnlock()
 
 	sp, ok := r.errs[h]
 	if !ok {
-		return nil, SP(Err{
-			Messages: map[string]string{
-				En: "No such error",
-				Ru: "Такой ошибки не существует",
-			},
-			Desc:     "There is no error with the provided hash ID",
-			Hint:     "Please, check your hash ID or fact of error registration. Registration should be in init() function",
-			Path:     "core/sperr/registry.go:144:1",
-			HttpCode: 404,
-			Level:    levels.LevelHighDebug,
-			Meta: map[string]any{
-				HashKey: h,
-			},
-		})
+		return nil
 	}
 
-	var cp *SPError
+	cp := &SPError{}
 	*cp = *sp
 
-	return cp, nil
+	return cp
 }
