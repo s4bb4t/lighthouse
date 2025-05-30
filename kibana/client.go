@@ -88,16 +88,16 @@ func (c *Client) startFlushing(wantErrors bool) chan error {
 				c.Unlock()
 			}
 		}()
+	} else {
+		go func() {
+			ticker := time.NewTicker(c.config.FlushPeriod)
+			for range ticker.C {
+				c.Lock()
+				errChan <- c.flush()
+				c.Unlock()
+			}
+		}()
 	}
-
-	go func() {
-		ticker := time.NewTicker(c.config.FlushPeriod)
-		for range ticker.C {
-			c.Lock()
-			errChan <- c.flush()
-			c.Unlock()
-		}
-	}()
 
 	return errChan
 }

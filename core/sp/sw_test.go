@@ -10,7 +10,7 @@ func TestSPError_Spin(t *testing.T) {
 	root := Api()
 
 	err := root.Spin(levels.LevelMediumDebug)
-	fmt.Println(err.ReadPath())
+	fmt.Println(err.ReadSource())
 
 	b, _ := err.MarshalJSON()
 
@@ -25,7 +25,6 @@ func Api() *Error {
 		},
 		Desc:  "Internal Error",
 		Hint:  "Try Again later",
-		Path:  "api",
 		Level: levels.LevelHighDebug,
 	}).MustDone()
 }
@@ -38,31 +37,28 @@ func App() *Error {
 		},
 		Desc:  "Database error",
 		Hint:  "Check repo layer",
-		Path:  "app",
 		Level: levels.LevelMediumDebug,
 	}).MustDone()
 }
 
 func DB() *Error {
-	return SP(Err{
+	return New(Err{
 		Messages: map[string]string{
 			En: "Db connection failed",
 		},
 		Desc:  "Failed to connect to database",
 		Hint:  "check connection string, credentials, etc.",
-		Path:  "Db",
 		Level: levels.LevelDeepDebug,
 	}).MustDone()
 }
 
 func TestWrap(t *testing.T) {
-	spFirst := SP(Err{
+	spFirst := New(Err{
 		Messages: map[string]string{
 			En: "Error message",
 		},
 		Desc: "First Error",
 		Hint: "Delete system32",
-		Path: "TestUsage()",
 	}).MustDone()
 
 	t.Log(Wrap(spFirst, Err{
@@ -71,26 +67,23 @@ func TestWrap(t *testing.T) {
 		},
 		Desc: "Second Error",
 		Hint: "read spFirst",
-		Path: "TestUsage",
 	}).ReadHint())
 }
 
 func TestWrapMethod(t *testing.T) {
-	spFirst := SP(Err{
+	spFirst := New(Err{
 		Messages: map[string]string{
 			En: "Error message",
 		},
 		Desc: "First Error",
 		Hint: "Delete system32",
-		Path: "TestUsage()",
 	})
-	spSecond := SP(Err{
+	spSecond := New(Err{
 		Messages: map[string]string{
 			En: "error message",
 		},
 		Desc: "Second Error",
 		Hint: "read spFirst",
-		Path: "TestUsage",
 	})
 
 	spSecond.Wrap(spFirst)

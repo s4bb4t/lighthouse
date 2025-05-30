@@ -2,17 +2,24 @@ package lighthouse
 
 import (
 	"github.com/s4bb4t/lighthouse/kibana"
+	"github.com/s4bb4t/lighthouse/logger"
 	"github.com/s4bb4t/lighthouse/tg"
 )
 
 type Lighthouse struct {
-	b *tg.Bot
-	k *kibana.Hook
+	*logger.Logger
+	*tg.Bot
+	*kibana.Hook
 }
 
-func NewLighthouse(bot *tg.Bot, kib *kibana.Hook) *Lighthouse {
+func New() {
+
+}
+
+func ManualNew(bot *tg.Bot, kib *kibana.Hook, log *logger.Logger) *Lighthouse {
 	return &Lighthouse{
-		b: nil,
-		k: nil,
+		Logger: log,
+		Bot:    bot,
+		Hook:   kib,
 	}
 }

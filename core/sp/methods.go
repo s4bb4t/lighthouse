@@ -17,7 +17,7 @@ import (
 // Internal method used by Done() and MustDone()
 func (e *Error) done() (hash.Hash, error) {
 	if e == nil || e.desc == "" || e.messages[En] == "" {
-		return nil, fmt.Errorf("do not use empty sperror: it may cause misundertstanings")
+		return nil, fmt.Errorf("do not use empty sperror: it may cause misunderstandings")
 	}
 
 	e.timestamp = time.Now()
@@ -27,6 +27,14 @@ func (e *Error) done() (hash.Hash, error) {
 		return nil, err
 	}
 	return e.id, err
+}
+
+// mustDone ensures the completion of an operation, panicking if an error occurs, and returns the updated Error instance.
+func (e *Error) mustDone() *Error {
+	if _, err := e.done(); err != nil {
+		panic(err)
+	}
+	return e
 }
 
 // Done finalizes the error handling process and returns a hash and an error if any occurs during the operation.
@@ -52,11 +60,11 @@ func (e *Error) Error() string {
 	return e.desc + ": " + e.hint
 }
 
+// Unwrap returns the underlying error if it exists; otherwise, it returns the cause of the error.
 func (e *Error) Unwrap() error {
 	if e.underlying != nil {
 		return e.underlying
 	}
-
 	return e.cause
 }
 
@@ -115,8 +123,10 @@ func (e *Error) ReadLevel() levels.Level {
 func (e *Error) ReadMeta(key string) any {
 	return e.meta[key]
 }
-func (e *Error) ReadPath() string {
-	return e.path
+
+// ReadSource retrieves the source field value from the Error instance. It returns the source as a string.
+func (e *Error) ReadSource() string {
+	return e.source
 }
 
 // ReadHash returns the hash ID of the error.
@@ -124,6 +134,8 @@ func (e *Error) ReadPath() string {
 func (e *Error) ReadHash() hash.Hash {
 	return e.id
 }
+
+// ReadTime returns the timestamp associated with the Error instance.
 func (e *Error) ReadTime() time.Time {
 	return e.timestamp
 }

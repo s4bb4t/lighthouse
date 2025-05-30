@@ -10,7 +10,6 @@ type Err struct {
 	Messages map[string]string // localized message
 	Desc     string            // detailed description
 	Hint     string            // how to resolve
-	Path     string            // path/operation
 
 	HttpCode int          // HTTP status
 	Level    levels.Level // error level

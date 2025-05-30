@@ -23,7 +23,6 @@ func Api() *sp.Error {
 		},
 		Desc:  "Internal Error",
 		Hint:  "Try Again later",
-		Path:  "api",
 		Level: levels.LevelHighDebug,
 	}).MustDone()
 }
@@ -35,19 +34,17 @@ func App() *sp.Error {
 		},
 		Desc:  "Database error",
 		Hint:  "Check repo layer",
-		Path:  "app",
 		Level: levels.LevelMediumDebug,
 	}).MustDone()
 }
 
 func DB() *sp.Error {
-	return sp.SP(sp.Err{
+	return sp.New(sp.Err{
 		Messages: map[string]string{
 			sp.En: "Db connection failed",
 		},
 		Desc:  "Failed to connect to database",
 		Hint:  "check connection string, credentials, etc.",
-		Path:  "Db",
 		Level: levels.LevelDeepDebug,
 	}).MustDone()
 }

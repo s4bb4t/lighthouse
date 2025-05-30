@@ -4,7 +4,7 @@ import (
 	"github.com/s4bb4t/lighthouse/core/levels"
 )
 
-// TODO: implement function that retrieve whole path of error based on Level
+// TODO: implement function that retrieve whole source of error based on Level
 
 // Wrap wraps src into e's underlying Error
 func (e *Error) Wrap(src *Error) *Error {
@@ -30,7 +30,7 @@ func Wrap(src *Error, dst any) *Error {
 			return src
 		}
 
-		res := SP(v)
+		res := New(v)
 		res.underlying = src
 		res.remainsUnderlying = src.remainsUnderlying + 1
 

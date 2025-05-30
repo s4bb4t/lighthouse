@@ -19,7 +19,7 @@ type (
 		messages map[string]string // localized message
 		desc     string            // detailed description
 		hint     string            // how to resolve
-		path     string            // path/operation
+		source   string            // source of error (file path, line number, etc.)
 
 		id        hash.Hash    // UUID or content hash
 		httpCode  int          // HTTP status
@@ -27,7 +27,6 @@ type (
 		timestamp time.Time    // when occurred
 
 		cause error          // nested error
-		stack []string       // stack trace
 		meta  map[string]any // arbitrary fields (user_id, trace_id, etc.)
 
 		remainsUnderlying int
@@ -42,21 +41,20 @@ func NewSpErr() *Error {
 	return &Error{}
 }
 
-// SP constructs and returns a new Error based on the provided Err.
-// It initializes a new Error instance, then copies all fields from the provided Err and returns the configured Error instance
-func SP(f Err) *Error {
+// New constructs and returns a new Error based on the provided Err.
+// It initializes a new Error instance, then copies all fields from the provided Err and returns
+// the configured and ready to use Error instance
+func New(f Err) *Error {
 	sp := NewSpErr()
 
 	if sp.messages == nil {
 		sp.messages = make(map[string]string)
 	}
-
 	maps.Copy(sp.messages, f.Messages)
 
 	if sp.meta == nil {
 		sp.meta = make(map[string]any)
 	}
-
 	maps.Copy(sp.meta, f.Meta)
 
 	return sp.
@@ -65,7 +63,8 @@ func SP(f Err) *Error {
 		Hint(f.Hint).
 		Code(f.HttpCode).
 		Level(f.Level).
-		Caused(f.Cause)
+		Caused(f.Cause).
+		mustDone()
 }
 
 // Caused sets the underlying error.
@@ -117,11 +116,11 @@ func (e *Error) Meta(key string, val any) *Error {
 	return e
 }
 
-// _path is an internal method that sets the error path based on the caller's location
+// _path is an internal method that sets the error source based on the caller's location
 // Stack frame level to look up (relative to caller)
 // Returns:
-// - *Error: The modified error instance with path set
-// The path format is "absolute_file_path:line_number"
+// - *Error: The modified error instance with source set
+// The source format is "absolute_file_path:line_number"
 func (e *Error) _path(lvl int) *Error {
 	_, file, line, ok := runtime.Caller(lvl + 1)
 	if ok {
@@ -129,16 +128,16 @@ func (e *Error) _path(lvl int) *Error {
 		if err != nil {
 			panic(err)
 		}
-		e.path = fmt.Sprintf("%s:%d", absPath, line)
+		e.source = fmt.Sprintf("%s:%d", absPath, line)
 	}
 	return e
 }
 
-// Path sets the error path based on the caller's location
+// Source sets the error source based on the caller's location
 // Stack frame level to look up (relative to caller)
 // Returns:
-// - *Error: The modified error instance with path set
-// The path format is "absolute_file_path:line_number"
-func (e *Error) Path() *Error {
+// - *Error: The modified error instance with source set
+// The source format is "absolute_file_path:line_number"
+func (e *Error) Source() *Error {
 	return e._path(0)
 }

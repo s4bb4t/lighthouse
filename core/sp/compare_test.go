@@ -16,7 +16,7 @@ func TestSPError_DeepIs(t *testing.T) {
 		{
 			name: "normal",
 			args: sql.ErrNoRows,
-			err: Registry.errs[NotFound].Wrap(SP(Err{
+			err: Registry.errs[NotFound].Wrap(New(Err{
 				Messages: map[string]string{
 					En: "t",
 				},
@@ -52,7 +52,7 @@ func TestSPError_Is(t *testing.T) {
 	}{
 		{
 			name: "normal",
-			args: SP(Err{
+			args: New(Err{
 				Messages: map[string]string{
 					En: "en",
 				},
@@ -66,7 +66,7 @@ func TestSPError_Is(t *testing.T) {
 		},
 		{
 			name: "notfound",
-			args: SP(Err{
+			args: New(Err{
 				Messages: map[string]string{
 					En: "en",
 				},
@@ -97,7 +97,7 @@ func TestSPError_IsSP(t *testing.T) {
 	}{
 		{
 			name: "true",
-			sp1: SP(Err{
+			sp1: New(Err{
 				Messages: map[string]string{
 					En: "en",
 				},
@@ -106,7 +106,7 @@ func TestSPError_IsSP(t *testing.T) {
 				Level: levels.LevelError,
 				Cause: sql.ErrTxDone,
 			}),
-			sp2: SP(Err{
+			sp2: New(Err{
 				Messages: map[string]string{
 					En: "en",
 				},
@@ -119,7 +119,7 @@ func TestSPError_IsSP(t *testing.T) {
 		},
 		{
 			name: "true",
-			sp1: SP(Err{
+			sp1: New(Err{
 				Messages: map[string]string{
 					En: "en",
 				},
@@ -128,7 +128,7 @@ func TestSPError_IsSP(t *testing.T) {
 				Level: levels.LevelError,
 				Cause: sql.ErrTxDone,
 			}),
-			sp2: SP(Err{
+			sp2: New(Err{
 				Messages: map[string]string{
 					En: "en",
 				},

@@ -40,8 +40,8 @@ func (e *Error) MarshalEasyJSON(w *jwriter.Writer) {
 	w.RawString(`"hint":`)
 	w.String(e.hint)
 	w.RawByte(',')
-	w.RawString(`"path":`)
-	w.String(e.path)
+	w.RawString(`"source":`)
+	w.String(e.source)
 
 	if e.httpCode != 0 {
 		w.RawByte(',')
@@ -120,8 +120,8 @@ func (e *Error) UnmarshalEasyJSON(in *jlexer.Lexer) {
 			e.desc = in.String()
 		case "hint":
 			e.hint = in.String()
-		case "path":
-			e.path = in.String()
+		case "source":
+			e.source = in.String()
 		case "http_code":
 			e.httpCode = in.Int()
 		case "level":

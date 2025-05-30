@@ -47,7 +47,7 @@ func TestSPError_Done(t *testing.T) {
 				t.Errorf("Done() error = %v, expectErr %v", err, tt.expectErr)
 			} else if err == nil {
 				t.Log(string(tt.spError.id.Sum(nil)))
-				fmt.Println(tt.spError.ReadPath())
+				fmt.Println(tt.spError.ReadSource())
 			}
 		})
 	}
