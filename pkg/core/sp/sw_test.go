@@ -10,7 +10,7 @@ func TestSPError_Spin(t *testing.T) {
 	root := Api()
 
 	err := root.Spin(levels.LevelDebug)
-	fmt.Println(err.ReadSource())
+	fmt.Println(err.Source())
 
 	b, _ := err.MarshalJSON()
 
@@ -19,66 +19,66 @@ func TestSPError_Spin(t *testing.T) {
 
 func Api() *Error {
 	err := App()
-	return Wrap(err, Err{
+	return Wrap(err, Sample{
 		Messages: map[string]string{
 			En: "Internal",
 		},
 		Desc:  "Internal Error",
 		Hint:  "Try Again later",
 		Level: levels.LevelInfo,
-	}).MustDone()
+	})
 }
 
 func App() *Error {
 	err := DB()
-	return Wrap(err, Err{
+	return Wrap(err, Sample{
 		Messages: map[string]string{
 			En: "App err",
 		},
 		Desc:  "Database error",
 		Hint:  "Check repo layer",
 		Level: levels.LevelError,
-	}).MustDone()
+	})
 }
 
 func DB() *Error {
-	return New(Err{
+	return New(Sample{
 		Messages: map[string]string{
 			En: "Db connection failed",
 		},
 		Desc:  "Failed to connect to storage",
 		Hint:  "check connection string, credentials, etc.",
 		Level: levels.LevelDebug,
-	}).MustDone()
+	})
 }
 
 func TestWrap(t *testing.T) {
-	spFirst := New(Err{
-		Messages: map[string]string{
-			En: "Error message",
-		},
-		Desc: "First Error",
-		Hint: "Delete system32",
-	}).MustDone()
-
-	t.Log(Wrap(spFirst, Err{
-		Messages: map[string]string{
-			En: "error message",
-		},
-		Desc: "Second Error",
-		Hint: "read spFirst",
-	}).ReadHint())
-}
-
-func TestWrapMethod(t *testing.T) {
-	spFirst := New(Err{
+	spFirst := New(Sample{
 		Messages: map[string]string{
 			En: "Error message",
 		},
 		Desc: "First Error",
 		Hint: "Delete system32",
 	})
-	spSecond := New(Err{
+
+	t.Log(Wrap(spFirst, Sample{
+		Messages: map[string]string{
+			En: "error message",
+		},
+		Desc: "Second Error",
+		Hint: "read spFirst",
+	}).Hint())
+}
+
+func TestWrapMethod(t *testing.T) {
+	spFirst := New(Sample{
+		Messages: map[string]string{
+			En: "Error message",
+		},
+		Desc: "First Error",
+		Hint: "Delete system32",
+	})
+	spSecond := New(Sample{
 		Messages: map[string]string{
 			En: "error message",
 		},

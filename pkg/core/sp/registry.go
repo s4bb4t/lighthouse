@@ -28,7 +28,7 @@ var (
 func init() {
 	Registry.errs = make(map[hash.Hash]*Error)
 
-	Internal, _ = Registry.Reg(New(Err{
+	Internal, _ = Registry.Reg(New(Sample{
 		Messages: map[string]string{
 			En: "Internal server error",
 			Ru: "Ошибка сервера",
@@ -39,7 +39,7 @@ func init() {
 		Level:    levels.LevelUser,
 	}))
 
-	NotFound, _ = Registry.Reg(New(Err{
+	NotFound, _ = Registry.Reg(New(Sample{
 		Messages: map[string]string{
 			En: "Resource not found",
 			Ru: "Ресурс не найден",
@@ -50,7 +50,7 @@ func init() {
 		Level:    levels.LevelUser,
 	}))
 
-	BadRequest, _ = Registry.Reg(New(Err{
+	BadRequest, _ = Registry.Reg(New(Sample{
 		Messages: map[string]string{
 			En: "Bad request",
 			Ru: "Неверный запрос",
@@ -61,7 +61,7 @@ func init() {
 		Level:    levels.LevelUser,
 	}))
 
-	Unauthorized, _ = Registry.Reg(New(Err{
+	Unauthorized, _ = Registry.Reg(New(Sample{
 		Messages: map[string]string{
 			En: "Unauthorized",
 			Ru: "Не авторизован",
@@ -70,9 +70,9 @@ func init() {
 		Hint:     "Please provide valid authentication credentials",
 		HttpCode: 401,
 		Level:    levels.LevelUser,
-	}).MustDone())
+	}))
 
-	Forbidden, _ = Registry.Reg(New(Err{
+	Forbidden, _ = Registry.Reg(New(Sample{
 		Messages: map[string]string{
 			En: "Forbidden",
 			Ru: "Доступ запрещен",
@@ -81,9 +81,9 @@ func init() {
 		Hint:     "Please contact your administrator if you need access",
 		HttpCode: 403,
 		Level:    levels.LevelUser,
-	}).MustDone())
+	}))
 
-	Timeout, _ = Registry.Reg(New(Err{
+	Timeout, _ = Registry.Reg(New(Sample{
 		Messages: map[string]string{
 			En: "Request timeout",
 			Ru: "Время ожидания истекло",
@@ -92,7 +92,7 @@ func init() {
 		Hint:     "Please try again. If the problem persists, contact support",
 		HttpCode: 408,
 		Level:    levels.LevelUser,
-	}).MustDone())
+	}))
 }
 
 func (r *registry) Reg(e *Error) (hash.Hash, error) {
@@ -100,7 +100,7 @@ func (r *registry) Reg(e *Error) (hash.Hash, error) {
 	defer r.Unlock()
 
 	if e == nil {
-		return nil, New(Err{
+		return nil, New(Sample{
 			Messages: map[string]string{
 				En: "Nil error provided",
 				Ru: "передана nil ошибка",
@@ -109,12 +109,12 @@ func (r *registry) Reg(e *Error) (hash.Hash, error) {
 			Hint:     "Please, check your code and provide a valid error",
 			HttpCode: 400,
 			Level:    levels.LevelError,
-		}).MustDone()
+		})
 	}
 
 	h, err := e.done()
 	if err != nil {
-		return nil, New(Err{
+		return nil, New(Sample{
 			Messages: map[string]string{
 				En: "Failed to validate Error",
 				Ru: "Ошибка в процессе валидации",
@@ -127,7 +127,7 @@ func (r *registry) Reg(e *Error) (hash.Hash, error) {
 			Meta: map[string]any{
 				SPErrorKey: *e,
 			},
-		}).MustDone()
+		})
 	}
 
 	r.errs[h] = e

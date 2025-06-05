@@ -13,7 +13,7 @@ func (b *Bot) Info(msg string) error {
 
 	subs, err := b.storage.Read("")
 	if err != nil {
-		return sp.Wrap(sp.Ensure(err), sp.New(sp.Err{
+		return sp.Wrap(sp.Ensure(err), sp.New(sp.Sample{
 			Messages: map[string]string{
 				sp.En: "Failed to read users",
 			},
@@ -32,30 +32,33 @@ func (b *Bot) Info(msg string) error {
 	return nil
 }
 
-func (b *Bot) Error(e error, group string) error {
+func (b *Bot) Error(e error, groups ...string) error {
 	b.RLock()
 	defer b.RUnlock()
 
-	subs, err := b.storage.Read(group)
-	if err != nil {
-		return sp.Wrap(sp.Ensure(err), sp.New(sp.Err{
-			Messages: map[string]string{
-				sp.En: "Failed to read users",
-			},
-			Desc:  "Failed to read subscribed users's ids",
-			Hint:  "Check storage",
-			Level: levels.LevelError,
-		}))
-	}
-
-	for _, id := range subs {
-		msg := tgbotapi.NewMessage(id, prettify(e))
-		msg.ParseMode = "MarkdownV2"
-		_, err = b.Api.Send(msg)
+	for _, group := range groups {
+		subs, err := b.storage.Read(group)
 		if err != nil {
-			return sp.Wrap(sp.Ensure(err), sp.Registry.Get(sendErr))
+			return sp.Wrap(sp.Ensure(err), sp.Sample{
+				Messages: map[string]string{
+					sp.En: "Failed to read users",
+				},
+				Desc:  "Failed to read subscribed users's ids",
+				Hint:  "Check storage",
+				Level: levels.LevelError,
+			})
+		}
+
+		for _, id := range subs {
+			msg := tgbotapi.NewMessage(id, prettify(e))
+			msg.ParseMode = "MarkdownV2"
+			_, err = b.Api.Send(msg)
+			if err != nil {
+				return sp.Wrap(sp.Ensure(err), sp.Registry.Get(sendErr))
+			}
 		}
 	}
+
 	return nil
 }
 

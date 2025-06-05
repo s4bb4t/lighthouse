@@ -4,8 +4,8 @@ import "github.com/s4bb4t/lighthouse/pkg/core/levels"
 
 type (
 	Notify interface {
-		Info(string) error
-		Error(error, string) error
+		Info(msg string) error
+		Error(err error, group ...string) error
 		//Warn(string) error
 		//Debug(string) error
 	}
@@ -17,7 +17,7 @@ type (
 	}
 
 	Storage interface {
-		Put(string, int64) error
-		Read(string) ([]int64, error)
+		Put(group string, id int64) error
+		Read(group string) (ids []int64, err error)
 	}
 )

@@ -17,7 +17,7 @@ func (b *Bot) handle(upd *tgbotapi.Update) {
 		b.Lock()
 		err := b.storage.Put(upd.Message.Text, upd.Message.Chat.ID)
 		if err != nil {
-			sp.Wrap(sp.Ensure(err), sp.New(sp.Err{
+			sp.Wrap(sp.Ensure(err), sp.New(sp.Sample{
 				Messages: map[string]string{
 					sp.En: "failed to subscribe user to alarm",
 				},

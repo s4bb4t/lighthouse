@@ -3,6 +3,7 @@
 package sp
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 	"hash"
@@ -38,43 +39,47 @@ type (
 // It initializes an empty Error struct that can be further configured using method chaining.
 // This is the base constructor for creating new structured errors.
 func NewSpErr() *Error {
-	return &Error{}
+	return &Error{
+		messages:  make(map[string]string),
+		id:        sha256.New(),
+		timestamp: time.Time{},
+	}
 }
 
-// New constructs and returns a new Error based on the provided Err.
-// It initializes a new Error instance, then copies all fields from the provided Err and returns
+// New constructs and returns a new Error based on the provided Sample.
+// It initializes a new Error instance, then copies all fields from the provided Sample and returns
 // the configured and ready to use Error instance
-func New(f Err) *Error {
+func New(s Sample) *Error {
 	sp := NewSpErr()
 
 	if sp.messages == nil {
 		sp.messages = make(map[string]string)
 	}
-	maps.Copy(sp.messages, f.Messages)
+	maps.Copy(sp.messages, s.Messages)
 
 	if sp.meta == nil {
 		sp.meta = make(map[string]any)
 	}
-	maps.Copy(sp.meta, f.Meta)
+	maps.Copy(sp.meta, s.Meta)
 
 	return sp.
 		_path(1).
-		Desc(f.Desc).
-		Hint(f.Hint).
-		Code(f.HttpCode).
-		Level(f.Level).
-		Caused(f.Cause).
+		SetDesc(s.Desc).
+		SetHint(s.Hint).
+		SetCode(s.HttpCode).
+		SetLevel(s.Level).
+		SetCaused(s.Cause).
 		mustDone()
 }
 
-// Caused sets the underlying error.
-func (e *Error) Caused(err error) *Error {
+// SetCaused sets the underlying error.
+func (e *Error) SetCaused(err error) *Error {
 	e.cause = err
 	return e
 }
 
-// Msg sets the localized message for the given language.
-func (e *Error) Msg(lg, msg string) *Error {
+// SetMsg sets the localized message for the given language.
+func (e *Error) SetMsg(lg, msg string) *Error {
 	if e.messages == nil {
 		e.messages = make(map[string]string)
 	}
@@ -83,35 +88,35 @@ func (e *Error) Msg(lg, msg string) *Error {
 	return e
 }
 
-// Desc sets the complete description for the given language.
-func (e *Error) Desc(desc string) *Error {
+// SetDesc sets the complete description for the given language.
+func (e *Error) SetDesc(desc string) *Error {
 	e.desc = desc
 	return e
 }
 
-// Hint sets the hint for the given language.
-func (e *Error) Hint(hint string) *Error {
+// SetHint sets the hint for the given language.
+func (e *Error) SetHint(hint string) *Error {
 	e.hint = hint
 	return e
 }
 
-// Code sets the HTTP status code for the error.
+// SetCode sets the HTTP status code for the error.
 // It accepts an integer representing the HTTP status code and returns the modified Error.
-func (e *Error) Code(httpCode int) *Error {
+func (e *Error) SetCode(httpCode int) *Error {
 	e.httpCode = httpCode
 	return e
 }
 
-// Level sets the severity level of the error.
+// SetLevel sets the severity level of the error.
 // It accepts a Level value and returns the modified Error.
-func (e *Error) Level(lvl levels.Level) *Error {
+func (e *Error) SetLevel(lvl levels.Level) *Error {
 	e.level = lvl
 	return e
 }
 
-// Meta adds a key-value pair to the error's metadata.
+// AddMeta adds a key-value pair to the error's metadata.
 // It accepts a string key and any value, returning the modified Error.
-func (e *Error) Meta(key string, val any) *Error {
+func (e *Error) AddMeta(key string, val any) *Error {
 	e.meta[key] = val
 	return e
 }
@@ -133,11 +138,11 @@ func (e *Error) _path(lvl int) *Error {
 	return e
 }
 
-// Source sets the error source based on the caller's location
+// SetSource sets the error source based on the caller's location
 // Stack frame level to look up (relative to caller)
 // Returns:
 // - *Error: The modified error instance with source set
 // The source format is "absolute_file_path:line_number"
-func (e *Error) Source() *Error {
+func (e *Error) SetSource() *Error {
 	return e._path(0)
 }

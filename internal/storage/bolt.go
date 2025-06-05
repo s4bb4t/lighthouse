@@ -19,7 +19,7 @@ const (
 func New() (*Storage, error) {
 	bb, err := bbolt.Open(subs, 0600, bbolt.DefaultOptions)
 	if err != nil {
-		return nil, sp.New(sp.Err{
+		return nil, sp.New(sp.Sample{
 			Messages: map[string]string{
 				"en": "failed to open subs database",
 			},
@@ -33,7 +33,7 @@ func New() (*Storage, error) {
 	err = bb.Update(func(tx *bbolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(subsBucket))
 		if err != nil {
-			return sp.New(sp.Err{
+			return sp.New(sp.Sample{
 				Messages: map[string]string{
 					"en": "failed to create subs bucket",
 				},
@@ -64,7 +64,7 @@ func (s *Storage) Put(group string, id int64) error {
 	return s.db.Update(func(tx *bbolt.Tx) error {
 		err := tx.Bucket([]byte(subsBucket)).Put(b, []byte(group))
 		if err != nil {
-			return sp.New(sp.Err{
+			return sp.New(sp.Sample{
 				Messages: map[string]string{
 					"en": "failed to put subs bucket",
 				},
@@ -87,7 +87,7 @@ func (s *Storage) Read(group string) ([]int64, error) {
 	err := s.db.View(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(subsBucket))
 		if b == nil {
-			return sp.New(sp.Err{
+			return sp.New(sp.Sample{
 				Messages: map[string]string{
 					"en": "failed to read subs bucket",
 				},
@@ -105,7 +105,7 @@ func (s *Storage) Read(group string) ([]int64, error) {
 
 			id, n := binary.Varint(k)
 			if n == 0 {
-				return sp.New(sp.Err{
+				return sp.New(sp.Sample{
 					Messages: map[string]string{
 						"en": "failed to read user's id",
 					},

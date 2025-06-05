@@ -20,27 +20,27 @@ func prettify(err error) string {
 	b.WriteString(divider + "\n\n\n")
 
 	b.WriteString(section("Level"))
-	b.WriteString("🚨 *" + escape(e.ReadLevel().String()) + "*\n\n")
+	b.WriteString("🚨 *" + escape(e.Level().String()) + "*\n\n")
 
 	b.WriteString(section("Message"))
-	b.WriteString("📝 `" + escape(e.ReadMsg(sp.En)) + "`\n\n")
+	b.WriteString("📝 `" + escape(e.Msg(sp.En)) + "`\n\n")
 
-	if e.ReadCaused() != nil {
+	if e.Caused() != nil {
 		b.WriteString(section("Cause"))
-		b.WriteString("💥 `" + escape(e.ReadCaused().Error()) + "`\n\n")
+		b.WriteString("💥 `" + escape(e.Caused().Error()) + "`\n\n")
 	}
 
 	b.WriteString(section("Description"))
-	b.WriteString("📖 " + escape(e.ReadDesc()) + "\n\n")
+	b.WriteString("📖 " + escape(e.Desc()) + "\n\n")
 
 	b.WriteString(section("Hint"))
-	b.WriteString("💡 _" + escape(e.ReadHint()) + "_\n\n")
+	b.WriteString("💡 _" + escape(e.Hint()) + "_\n\n")
 
 	b.WriteString(section("Source"))
-	b.WriteString("🧭 || `" + escape(e.ReadSource()) + "` ||\n\n")
+	b.WriteString("🧭 || `" + escape(e.Source()) + "` ||\n\n")
 
 	b.WriteString(section("Time"))
-	b.WriteString("⏰ " + escape(e.ReadTime().Format("2006-01-02 15:04:05")) + "\n\n")
+	b.WriteString("⏰ " + escape(e.Time().Format("2006-01-02 15:04:05")) + "\n\n")
 
 	meta := e.AllMeta()
 	if len(meta) > 0 {

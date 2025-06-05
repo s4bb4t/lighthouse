@@ -21,7 +21,7 @@ func TestLogger_Dev(t *testing.T) {
 	}{
 		{
 			name: "normal",
-			args: sp2.New(sp2.Err{
+			args: sp2.New(sp2.Sample{
 				Messages: map[string]string{
 					"en": "Failed to connect to storage",
 				},
@@ -29,7 +29,7 @@ func TestLogger_Dev(t *testing.T) {
 				Hint:     "Check connection string, credentials, etc.",
 				HttpCode: 500,
 				Level:    levels.LevelInfo,
-			}).MustDone(),
+			}),
 		},
 	}
 	for _, tt := range tests {
@@ -78,13 +78,13 @@ func TestLogger_Error(t *testing.T) {
 		{
 			name: "normal",
 			args: args{
-				e: sp2.New(sp2.Err{
+				e: sp2.New(sp2.Sample{
 					Messages: map[string]string{
 						"en": "test",
 					},
 					Desc: "123",
 					Hint: "123",
-				}).MustDone(),
+				}),
 				lvl: levels.LevelError,
 			},
 		},

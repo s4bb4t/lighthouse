@@ -17,7 +17,7 @@ func Test_registry_Get(t *testing.T) {
 		{
 			name: "Normal - Internal",
 			h:    Internal,
-			want: New(Err{
+			want: New(Sample{
 				Messages: map[string]string{
 					En: "Internal server error",
 					Ru: "Ошибка сервера",
@@ -42,7 +42,7 @@ func Test_registry_Get(t *testing.T) {
 			if !got.IsSP(tt.want) {
 				t.Errorf("Get() got = %v, want %v", got, tt.want)
 			}
-			t.Log("\n", got.ReadDesc(), "\n", tt.want.ReadDesc())
+			t.Log("\n", got.Desc(), "\n", tt.want.Desc())
 		})
 	}
 }
@@ -62,7 +62,7 @@ func Test_registry_Reg(t *testing.T) {
 		},
 		{
 			name: "Normal",
-			err: New(Err{
+			err: New(Sample{
 				Messages: map[string]string{
 					En: "test",
 					Ru: "test",

@@ -14,22 +14,22 @@ func Zap(e *sp.Error, lvl levels.Level) []zapcore.Field {
 	f = append(f, zapcore.Field{
 		Key:    "desc",
 		Type:   15,
-		String: err.ReadDesc(),
+		String: err.Desc(),
 	})
 	f = append(f, zapcore.Field{
 		Key:    "hint",
 		Type:   15,
-		String: err.ReadHint(),
+		String: err.Hint(),
 	})
 	f = append(f, zapcore.Field{
 		Key:    "path",
 		Type:   15,
-		String: err.ReadSource(),
+		String: err.Source(),
 	})
 	f = append(f, zapcore.Field{
 		Key:    "time",
 		Type:   15,
-		String: err.ReadTime().String(),
+		String: err.Time().String(),
 	})
 
 	return f
@@ -41,19 +41,19 @@ func Slog(e *sp.Error, lvl levels.Level) []any {
 
 	f = append(f, slog.Attr{
 		Key:   "desc",
-		Value: slog.StringValue(err.ReadDesc()),
+		Value: slog.StringValue(err.Desc()),
 	})
 	f = append(f, slog.Attr{
 		Key:   "hint",
-		Value: slog.StringValue(err.ReadHint()),
+		Value: slog.StringValue(err.Hint()),
 	})
 	f = append(f, slog.Attr{
 		Key:   "source",
-		Value: slog.StringValue(err.ReadSource()),
+		Value: slog.StringValue(err.Source()),
 	})
 	f = append(f, slog.Attr{
 		Key:   "err_time",
-		Value: slog.StringValue(err.ReadTime().Format("2006.01.02 15:04:05")),
+		Value: slog.StringValue(err.Time().Format("2006.01.02 15:04:05")),
 	})
 
 	return f

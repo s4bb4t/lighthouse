@@ -17,17 +17,12 @@ func (e *Error) Wrap(src *Error) *Error {
 	return e
 }
 
-// Wrap wraps `src` into new-initialized Error from provided Err or existing Error.
-// It returns dest if src matches its hash, otherwise wraps src into dest.
+// Wrap wraps `src` into new-initialized Error from provided Sample or existing Error.
 func Wrap(src *Error, dst any) *Error {
 	switch v := dst.(type) {
-	case Err:
-		h, _ := v.hash()
+	case Sample:
 		if src == nil || src.id == nil {
 			panic("source error is not validated through Done()")
-		}
-		if cmpHashes(src.id, h) {
-			return src
 		}
 
 		res := New(v)
@@ -39,10 +34,6 @@ func Wrap(src *Error, dst any) *Error {
 		}
 		return res
 	case *Error:
-		if src.IsSP(v) {
-			return src
-		}
-
 		v.underlying = src
 		v.remainsUnderlying = src.remainsUnderlying + 1
 		return v

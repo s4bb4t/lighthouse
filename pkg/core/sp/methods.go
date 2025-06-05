@@ -34,25 +34,6 @@ func (e *Error) mustDone() *Error {
 	if _, err := e.done(); err != nil {
 		panic(err)
 	}
-	return e
-}
-
-// Done finalizes the error handling process and returns a hash and an error if any occurs during the operation.
-// It generates a hash ID based on the Error's fields
-// Error can't be used without calling Done() or MustDone()
-func (e *Error) Done() (hash.Hash, error) {
-	_ = e._path(1)
-	return e.done()
-}
-
-// MustDone generates a hash ID based on the Error's fields
-// Error can't be used without calling Done() or MustDone()
-// It panics if an error is encountered during the process.
-func (e *Error) MustDone() *Error {
-	// TODO: remove and simplify
-	if _, err := e.done(); err != nil {
-		panic(err)
-	}
 	return e._path(1)
 }
 
@@ -69,17 +50,17 @@ func (e *Error) Unwrap() error {
 	return e.cause
 }
 
-// Cast attempts to convert a generic error to *Error type.
-func Cast(err error) (*Error, bool) {
+// cast attempts to convert a generic error to *Error type.
+func cast(err error) (*Error, bool) {
 	e, b := err.(*Error)
 	return e, b
 }
 
 func Ensure(err error) *Error {
-	if serr, ok := Cast(err); ok {
+	if serr, ok := cast(err); ok {
 		return serr
 	}
-	return New(Err{
+	return New(Sample{
 		Messages: map[string]string{En: "Unknown error"},
 		Desc:     err.Error(),
 		Hint:     "Check original .Error()",
@@ -96,60 +77,60 @@ func (e *Error) AllMeta() map[string]any {
 	return meta
 }
 
-// ReadCaused returns the underlying cause of the error.
+// Caused returns the underlying cause of the error.
 // If there is no cause, it returns nil.
-func (e *Error) ReadCaused() error {
+func (e *Error) Caused() error {
 	return e.cause
 }
 
-// ReadMsg returns the error message for the specified language code.
+// Msg returns the error message for the specified language code.
 // Parameter lg represents the language code to retrieve the message for.
-func (e *Error) ReadMsg(lg string) string {
+func (e *Error) Msg(lg string) string {
 	return e.messages[lg]
 }
 
-// ReadDesc returns the description of the error.
+// Desc returns the description of the error.
 // The description provides additional context about the error.
-func (e *Error) ReadDesc() string {
+func (e *Error) Desc() string {
 	return e.desc
 }
 
-// ReadHint returns a hint or suggestion related to resolving the error.
+// Hint returns a hint or suggestion related to resolving the error.
 // The hint provides guidance on how to fix or handle the error.
-func (e *Error) ReadHint() string {
+func (e *Error) Hint() string {
 	return e.hint
 }
 
-// ReadCode returns the HTTP status code associated with the error.
+// Code returns the HTTP status code associated with the error.
 // This code indicates the type of error in HTTP.
-func (e *Error) ReadCode() int {
+func (e *Error) Code() int {
 	return e.httpCode
 }
 
-// ReadLevel returns the severity level of the error.
+// Level returns the severity level of the error.
 // The level indicates how critical or severe the error is.
-func (e *Error) ReadLevel() levels.Level {
+func (e *Error) Level() levels.Level {
 	return e.level
 }
 
-// ReadMeta returns the metadata associated with the error.
+// Meta returns the metadata associated with the error.
 // The metadata provides additional information about the error.
-func (e *Error) ReadMeta(key string) any {
+func (e *Error) Meta(key string) any {
 	return e.meta[key]
 }
 
-// ReadSource retrieves the source field value from the Error instance. It returns the source as a string.
-func (e *Error) ReadSource() string {
+// Source retrieves the source field value from the Error instance. It returns the source as a string.
+func (e *Error) Source() string {
 	return e.source
 }
 
-// ReadHash returns the hash ID of the error.
+// Hash returns the hash ID of the error.
 // The hash ID is a unique identifier for the error.
-func (e *Error) ReadHash() hash.Hash {
+func (e *Error) Hash() hash.Hash {
 	return e.id
 }
 
-// ReadTime returns the timestamp associated with the Error instance.
-func (e *Error) ReadTime() time.Time {
+// Time returns the timestamp associated with the Error instance.
+func (e *Error) Time() time.Time {
 	return e.timestamp
 }
