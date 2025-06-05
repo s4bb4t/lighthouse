@@ -98,16 +98,9 @@ func (l *Logger) Error(e error, lvl levels.Level) {
 	if l.noop || e == nil {
 		return
 	}
-	// check if e is sp.Error
-	err, ok := sp.Cast(e)
-	if !ok {
-		// this is not sp.Error
-		// log it at classic way
-		l.log.Error(e.Error(), slog.String("source", l.pd(1)))
-		return
-	}
+	err := sp.Ensure(e)
 	// spin-prepare and log error
-	l.log.Error(err.ReadMsg(l.lg), hooks.Slog(err, lvl)...)
+	l.log.Error(err.Msg(l.lg), hooks.Slog(err, lvl)...)
 }
 
 // Debug - prints additional debug log to Logger's out
