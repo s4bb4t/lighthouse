@@ -99,7 +99,7 @@ func (s *Storage) Read(group string) ([]int64, error) {
 
 		c := b.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			if string(v) != group {
+			if group != "" && string(v) != group {
 				continue
 			}
 

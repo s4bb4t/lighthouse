@@ -9,7 +9,7 @@ import (
 func TestSPError_Spin(t *testing.T) {
 	root := Api()
 
-	err := root.Spin(levels.LevelMediumDebug)
+	err := root.Spin(levels.LevelDebug)
 	fmt.Println(err.ReadSource())
 
 	b, _ := err.MarshalJSON()
@@ -25,7 +25,7 @@ func Api() *Error {
 		},
 		Desc:  "Internal Error",
 		Hint:  "Try Again later",
-		Level: levels.LevelHighDebug,
+		Level: levels.LevelInfo,
 	}).MustDone()
 }
 
@@ -37,7 +37,7 @@ func App() *Error {
 		},
 		Desc:  "Database error",
 		Hint:  "Check repo layer",
-		Level: levels.LevelMediumDebug,
+		Level: levels.LevelError,
 	}).MustDone()
 }
 
@@ -48,7 +48,7 @@ func DB() *Error {
 		},
 		Desc:  "Failed to connect to storage",
 		Hint:  "check connection string, credentials, etc.",
-		Level: levels.LevelDeepDebug,
+		Level: levels.LevelDebug,
 	}).MustDone()
 }
 

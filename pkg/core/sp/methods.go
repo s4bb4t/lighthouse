@@ -49,6 +49,7 @@ func (e *Error) Done() (hash.Hash, error) {
 // Error can't be used without calling Done() or MustDone()
 // It panics if an error is encountered during the process.
 func (e *Error) MustDone() *Error {
+	// TODO: remove and simplify
 	if _, err := e.done(); err != nil {
 		panic(err)
 	}

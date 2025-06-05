@@ -10,7 +10,7 @@ import (
 )
 
 func TestBot(t *testing.T) {
-	b, err := New("7410446656:AAG2MSNlHI6PMejIxz4MGZd-nLaSKGnhNt0")
+	b, err := New("7410446656:AAG2MSNlHI6PMejIxz4MGZd-nLaSKGnhNt0", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,9 +32,9 @@ func TestBot(t *testing.T) {
 		},
 	}).MustDone()
 
-	err = b.Error(E)
+	err = b.Error(E, "")
 	if err != nil {
-		fmt.Println(hooks.Slog(sp.Ensure(err), levels.LevelDeepDebug))
+		fmt.Println(hooks.Slog(sp.Ensure(err), levels.LevelDebug))
 	}
 	select {}
 }

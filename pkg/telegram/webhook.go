@@ -7,7 +7,21 @@ import (
 	"net/http"
 )
 
-const WHPath = "/lighthouse/telegram/webhook"
+const (
+	wh     = "https://webhook.site/cb526586-6f6c-4398-87b1-cc313a08d012"
+	WHPath = "/lighthouse/telegram/webhook"
+)
+
+func (b *Bot) SetWebHookHandler(h func(b *Bot, addr, port string) (error, chan error)) {
+	b.wh = h
+}
+
+func (b *Bot) WebHook(url, port string) (error, chan error) {
+	if b.wh != nil {
+		return b.wh(b, url, port)
+	}
+	return b.StartDefaultWebHook(url, port)
+}
 
 func (b *Bot) StartDefaultWebHook(addr, port string) (error, chan error) {
 	if port == "" {

@@ -5,9 +5,9 @@ import "github.com/s4bb4t/lighthouse/pkg/core/levels"
 type (
 	Notify interface {
 		Info(string) error
-		Warn(string) error
-		Error(error) error
-		Debug(string) error
+		Error(error, string) error
+		//Warn(string) error
+		//Debug(string) error
 	}
 
 	Logger interface {

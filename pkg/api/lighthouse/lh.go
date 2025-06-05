@@ -14,14 +14,14 @@ type Lighthouse struct {
 }
 
 func New(stage, apikey string) *Lighthouse {
-	b, _ := telegram.New(apikey)
+	b, _ := telegram.New(apikey, nil)
 	return &Lighthouse{
 		log:    logger.New(stage, sp.En, nil),
 		notify: b,
 	}
 }
 
-// ManualNew manually creates Lighthouse from provided telegram.Bot, kiba
+// ManualNew manually creates Lighthouse
 func ManualNew(log usecase.Logger, notify usecase.Notify) *Lighthouse {
 	return &Lighthouse{
 		log:    log,
@@ -39,15 +39,17 @@ func (l *Lighthouse) Error(e error, lvl levels.Level) {
 	l.log.Error(e, lvl)
 }
 
-func (l *Lighthouse) AlertWarn(msg string) error {
-	return l.notify.Warn(msg)
-}
 func (l *Lighthouse) AlertInfo(msg string) error {
 	return l.notify.Info(msg)
 }
-func (l *Lighthouse) AlertError(e error) error {
-	return l.notify.Error(e)
+
+func (l *Lighthouse) AlertError(e error, group string) error {
+	return l.notify.Error(e, group)
 }
-func (l *Lighthouse) AlertDebug(msg string) error {
-	return l.notify.Debug(msg)
-}
+
+//func (l *Lighthouse) AlertDebug(msg string) error {
+//		return l.notify.Debug(msg)
+//}
+//func (l *Lighthouse) AlertWarn(msg string) error {
+//	return l.notify.Warn(msg)
+//}

@@ -36,7 +36,7 @@ func init() {
 		Desc:     "Internal server error. We are sorry for the inconvenience",
 		Hint:     "Please try again later - we are working on it",
 		HttpCode: 500,
-		Level:    levels.LevelHighUser,
+		Level:    levels.LevelUser,
 	}))
 
 	NotFound, _ = Registry.Reg(New(Err{
@@ -47,7 +47,7 @@ func init() {
 		Desc:     "The requested resource could not be found on this server",
 		Hint:     "Please check the URL and try again",
 		HttpCode: 404,
-		Level:    levels.LevelHighUser,
+		Level:    levels.LevelUser,
 	}))
 
 	BadRequest, _ = Registry.Reg(New(Err{
@@ -58,7 +58,7 @@ func init() {
 		Desc:     "The request could not be understood by the server due to malformed syntax",
 		Hint:     "Please check your request parameters and try again",
 		HttpCode: 400,
-		Level:    levels.LevelHighUser,
+		Level:    levels.LevelUser,
 	}))
 
 	Unauthorized, _ = Registry.Reg(New(Err{
@@ -69,7 +69,7 @@ func init() {
 		Desc:     "Authentication is required and has failed or has not been provided",
 		Hint:     "Please provide valid authentication credentials",
 		HttpCode: 401,
-		Level:    levels.LevelHighUser,
+		Level:    levels.LevelUser,
 	}).MustDone())
 
 	Forbidden, _ = Registry.Reg(New(Err{
@@ -80,7 +80,7 @@ func init() {
 		Desc:     "You don't have permission to access this resource",
 		Hint:     "Please contact your administrator if you need access",
 		HttpCode: 403,
-		Level:    levels.LevelHighUser,
+		Level:    levels.LevelUser,
 	}).MustDone())
 
 	Timeout, _ = Registry.Reg(New(Err{
@@ -91,7 +91,7 @@ func init() {
 		Desc:     "The server timed out waiting for the request",
 		Hint:     "Please try again. If the problem persists, contact support",
 		HttpCode: 408,
-		Level:    levels.LevelHighUser,
+		Level:    levels.LevelUser,
 	}).MustDone())
 }
 
@@ -108,7 +108,7 @@ func (r *registry) Reg(e *Error) (hash.Hash, error) {
 			Desc:     "Provided error is nil. This is not allowed)",
 			Hint:     "Please, check your code and provide a valid error",
 			HttpCode: 400,
-			Level:    levels.LevelHighDebug,
+			Level:    levels.LevelError,
 		}).MustDone()
 	}
 
@@ -122,7 +122,7 @@ func (r *registry) Reg(e *Error) (hash.Hash, error) {
 			Desc:     "Failed to create hash id of your error. It happens when you try to register an error with an empty description. Provided data of error in Meta",
 			Hint:     "Please, check your fields and provide a valid description, hint and EN message for your error",
 			HttpCode: 400,
-			Level:    levels.LevelHighDebug,
+			Level:    levels.LevelError,
 			Cause:    err,
 			Meta: map[string]any{
 				SPErrorKey: *e,

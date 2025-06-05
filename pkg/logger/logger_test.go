@@ -28,13 +28,13 @@ func TestLogger_Dev(t *testing.T) {
 				Desc:     "Failed to connect to storage due to timeout",
 				Hint:     "Check connection string, credentials, etc.",
 				HttpCode: 500,
-				Level:    levels.LevelHighUser,
+				Level:    levels.LevelInfo,
 			}).MustDone(),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d.Error(tt.args, levels.LevelDeepDebug)
+			d.Error(tt.args, levels.LevelInfo)
 		})
 	}
 }

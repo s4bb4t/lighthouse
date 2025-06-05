@@ -22,7 +22,7 @@ func TestSPError_DeepIs(t *testing.T) {
 				},
 				Desc:  "desc",
 				Hint:  "hint",
-				Level: levels.LevelHighUser,
+				Level: levels.LevelUser,
 				Cause: sql.ErrNoRows,
 			})),
 			want: true,

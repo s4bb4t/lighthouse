@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 	"github.com/s4bb4t/lighthouse/pkg/core/sp"
 	"strings"
 )
@@ -9,7 +10,7 @@ import (
 func prettify(err error) string {
 	var b strings.Builder
 	b.Grow(600)
-	e := sp.Ensure(err)
+	e := sp.Ensure(err).Spin(levels.LevelDebug)
 
 	const divider = "\u2800" // non-breaking space
 	section := func(title string) string {
