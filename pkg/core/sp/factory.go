@@ -17,6 +17,8 @@ type (
 	// Error represents a structured error type with extended information and metadata.
 	// It supports localized messages, detailed descriptions, resolution hints, and additional context.
 	Error struct {
+		stackTrace []string
+
 		messages map[string]string // localized message
 		desc     string            // detailed description
 		hint     string            // how to resolve
@@ -63,13 +65,13 @@ func New(s Sample) *Error {
 	maps.Copy(sp.meta, s.Meta)
 
 	return sp.
-		_path(1).
 		SetDesc(s.Desc).
 		SetHint(s.Hint).
 		SetCode(s.HttpCode).
 		SetLevel(s.Level).
 		SetCaused(s.Cause).
-		mustDone()
+		mustDone().
+		_path(1)
 }
 
 // SetCaused sets the underlying error.

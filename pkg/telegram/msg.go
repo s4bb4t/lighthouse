@@ -1,7 +1,6 @@
 package telegram
 
 import (
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 	"github.com/s4bb4t/lighthouse/pkg/core/sp"
@@ -32,48 +31,56 @@ func (b *Bot) Info(msg string) error {
 	return nil
 }
 
+func (b *Bot) readIds(group string) ([]int64, error) {
+	subs, err := b.storage.Read(group)
+	if err != nil {
+		return nil, sp.Wrap(sp.Ensure(err), sp.New(sp.Sample{
+			Messages: map[string]string{
+				sp.En: "Failed to read users",
+			},
+			Desc:  "Failed to read subscribed users's ids",
+			Hint:  "Check storage",
+			Level: levels.LevelError,
+		}))
+	}
+	return subs, nil
+}
+
+func (b *Bot) sendTo(ids []int64, msg *tgbotapi.MessageConfig) error {
+	for _, id := range ids {
+		msg.ChatID = id
+		_, err := b.Api.Send(*msg)
+		if err != nil {
+			return sp.Registry.Get(sendErr).SetCaused(err)
+		}
+	}
+	return nil
+}
+
 func (b *Bot) Error(e error, groups ...string) error {
 	b.RLock()
 	defer b.RUnlock()
 
-	for _, group := range groups {
-		subs, err := b.storage.Read(group)
-		if err != nil {
-			return sp.Wrap(sp.Ensure(err), sp.Sample{
-				Messages: map[string]string{
-					sp.En: "Failed to read users",
-				},
-				Desc:  "Failed to read subscribed users's ids",
-				Hint:  "Check storage",
-				Level: levels.LevelError,
-			})
-		}
+	msg := tgbotapi.NewMessage(0, prettify(e))
+	msg.ParseMode = "MarkdownV2"
 
-		for _, id := range subs {
-			msg := tgbotapi.NewMessage(id, prettify(e))
-			msg.ParseMode = "MarkdownV2"
-			_, err = b.Api.Send(msg)
-			if err != nil {
-				return sp.Wrap(sp.Ensure(err), sp.Registry.Get(sendErr))
-			}
+	var subs []int64
+	var err error
+
+	if groups == nil || len(groups) == 0 {
+		subs, err = b.readIds("")
+		if err != nil {
+			return err
 		}
 	}
 
-	return nil
-}
+	for _, group := range groups {
+		ids, err := b.readIds(group)
+		subs = append(subs, ids...)
+		if err != nil {
+			return err
+		}
+	}
 
-func (b *Bot) Warn(msg string) error {
-	// TODO: implement
-	_ = msg
-	b.RLock()
-	defer b.RUnlock()
-	return fmt.Errorf("unmplemented")
-}
-
-func (b *Bot) Debug(msg string) error {
-	// TODO: implement
-	_ = msg
-	b.RLock()
-	defer b.RUnlock()
-	return fmt.Errorf("unmplemented")
+	return b.sendTo(subs, &msg)
 }

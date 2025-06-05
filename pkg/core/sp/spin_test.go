@@ -9,12 +9,9 @@ import (
 func TestSPError_Spin(t *testing.T) {
 	root := Api()
 
-	err := root.Spin(levels.LevelDebug)
+	err := root.Spin(levels.LevelError)
 	fmt.Println(err.Source())
-
-	b, _ := err.MarshalJSON()
-
-	fmt.Println(string(b))
+	fmt.Println(err.stackTrace)
 }
 
 func Api() *Error {

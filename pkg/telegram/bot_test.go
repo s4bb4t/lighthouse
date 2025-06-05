@@ -33,7 +33,7 @@ func TestBot(t *testing.T) {
 		},
 	})
 
-	err = b.Error(E, "")
+	err = b.Error(E)
 	if err != nil {
 		fmt.Println(hooks.Slog(sp.Ensure(err), levels.LevelDebug))
 	}

@@ -42,20 +42,16 @@ func (e *Error) Error() string {
 	return e.desc + ": " + e.hint
 }
 
-// Unwrap returns the underlying error if it exists; otherwise, it returns the cause of the error.
-func (e *Error) Unwrap() error {
-	if e.underlying != nil {
-		return e.underlying
-	}
-	return e.cause
-}
-
 // cast attempts to convert a generic error to *Error type.
 func cast(err error) (*Error, bool) {
 	e, b := err.(*Error)
 	return e, b
 }
 
+// Ensure wraps a given error into a custom *Error type if it is not already of that type.
+// If the error is already of the *Error type, it is returned as-is.
+// This method is useful for ensuring that an error is of the *Error type.
+// It is recommended to use this method instead of casting the error to *Error type directly.
 func Ensure(err error) *Error {
 	if serr, ok := cast(err); ok {
 		return serr
@@ -66,7 +62,7 @@ func Ensure(err error) *Error {
 		Hint:     "Check original .Error()",
 		Level:    levels.LevelError,
 		Cause:    err,
-	}).mustDone()._path(1)
+	})._path(1)
 }
 
 // AllMeta returns a copy of all metadata associated with the error.
@@ -133,4 +129,10 @@ func (e *Error) Hash() hash.Hash {
 // Time returns the timestamp associated with the Error instance.
 func (e *Error) Time() time.Time {
 	return e.timestamp
+}
+
+// Stack returns the stack trace of the error.
+// Stack trace can be accessed ONLY after Spin() is used
+func (e *Error) Stack() []string {
+	return e.stackTrace
 }

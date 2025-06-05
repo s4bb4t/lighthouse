@@ -15,14 +15,27 @@ type (
 	}
 )
 
+// Registry is a global registry of all errors.
+// It is used to store and retrieve errors by their hash id.
+// It is thread-safe and can be used concurrently.
+// You can add your own errors to the registry using the Reg() method.
+// You can retrieve an error by its hash id using the Get() method.
+// The registry is initialized with a set of default errors: check Internal, NotFound, BadRequest, Unauthorized, Forbidden, Timeout.
 var Registry registry
+
 var (
-	Internal     hash.Hash
-	NotFound     hash.Hash
-	BadRequest   hash.Hash
+	// Internal is a hash id of the Internal server error.
+	Internal hash.Hash
+	// NotFound is a hash id of the Not found error.
+	NotFound hash.Hash
+	// BadRequest is a hash id of the Bad request error.
+	BadRequest hash.Hash
+	// Unauthorized is a hash id of the Unauthorized error.
 	Unauthorized hash.Hash
-	Forbidden    hash.Hash
-	Timeout      hash.Hash
+	// Forbidden is a hash id of the Forbidden error.
+	Forbidden hash.Hash
+	// Timeout is a hash id of the Request timeout error.
+	Timeout hash.Hash
 )
 
 func init() {
@@ -95,6 +108,11 @@ func init() {
 	}))
 }
 
+// Reg registers an error in the registry.
+// It returns a hash id of the error.
+// If the error is already registered, it returns the hash id of the existing error.
+// If the error is nil, it returns an error.
+// The error is validated and stored in the registry.
 func (r *registry) Reg(e *Error) (hash.Hash, error) {
 	r.Lock()
 	defer r.Unlock()
@@ -134,6 +152,9 @@ func (r *registry) Reg(e *Error) (hash.Hash, error) {
 	return h, nil
 }
 
+// Get returns an error by its hash id.
+// If the error is not found, it returns nil.
+// The returned error is a copy of the original error.
 func (r *registry) Get(h hash.Hash) *Error {
 	r.RLock()
 	defer r.RUnlock()

@@ -4,6 +4,7 @@ import (
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 )
 
+// Sample represents a structured template for error information with localization, details, and metadata.
 type Sample struct {
 	Messages map[string]string // localized message
 	Desc     string            // detailed description

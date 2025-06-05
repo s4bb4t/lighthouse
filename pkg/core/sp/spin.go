@@ -4,44 +4,6 @@ import (
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 )
 
-// TODO: implement function that retrieve whole source of error based on Level
-
-// Wrap wraps src into e's underlying Error
-func (e *Error) Wrap(src *Error) *Error {
-	if e.IsSP(src) {
-		return e
-	}
-
-	e.underlying = src
-	e.remainsUnderlying = src.remainsUnderlying + 1
-	return e
-}
-
-// Wrap wraps `src` into new-initialized Error from provided Sample or existing Error.
-func Wrap(src *Error, dst any) *Error {
-	switch v := dst.(type) {
-	case Sample:
-		if src == nil || src.id == nil {
-			panic("source error is not validated through Done()")
-		}
-
-		res := New(v)
-		res.underlying = src
-		res.remainsUnderlying = src.remainsUnderlying + 1
-
-		if _, err := res.done(); err != nil {
-			panic(err)
-		}
-		return res
-	case *Error:
-		v.underlying = src
-		v.remainsUnderlying = src.remainsUnderlying + 1
-		return v
-	default:
-		panic("unsupported destination type")
-	}
-}
-
 // Pop extracts and returns the current error from the error chain.
 // If the current object is nil or there are no more underlying errors (remainsUnderlying == -1),
 // returns nil.
@@ -82,6 +44,7 @@ func (e *Error) Spin(lvl levels.Level) *Error {
 
 	cp := &Error{}
 	*cp = *e
+	var stack []string
 
 	cur := cp.Pop()
 	if cur == nil {
@@ -93,8 +56,10 @@ func (e *Error) Spin(lvl levels.Level) *Error {
 
 	last := cur
 	for cur != nil && cur.level <= lvl {
+		stack = append(stack, cur.source)
 		last, cur = cur, cp.Pop()
 	}
 
+	last.stackTrace = stack
 	return last
 }
