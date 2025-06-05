@@ -16,7 +16,7 @@ func prettify(err error) string {
 		return "┌─ *" + title + "*\n"
 	}
 
-	b.WriteString(divider + "\n\n\n\n")
+	b.WriteString(divider + "\n\n\n")
 
 	b.WriteString(section("Level"))
 	b.WriteString("🚨 *" + escape(e.ReadLevel().String()) + "*\n\n")

@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	"github.com/s4bb4t/lighthouse/internal/hooks"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 	"github.com/s4bb4t/lighthouse/pkg/core/sp"
 	"testing"
@@ -14,6 +15,7 @@ func TestBot(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	b.StartLocalWebHook(wh, "8081")
 	time.Sleep(2 * time.Second)
 
 	E := sp.New(sp.Err{
@@ -32,7 +34,7 @@ func TestBot(t *testing.T) {
 
 	err = b.Error(E)
 	if err != nil {
-		fmt.Println(sp.Ensure(err).Spin(levels.LevelDeepDebug).ReadSource())
+		fmt.Println(hooks.Slog(sp.Ensure(err), levels.LevelDeepDebug))
 	}
 	select {}
 }

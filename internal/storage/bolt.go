@@ -2,7 +2,6 @@ package storage
 
 import (
 	"encoding/binary"
-	"fmt"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 	"github.com/s4bb4t/lighthouse/pkg/core/sp"
 	"go.etcd.io/bbolt"
@@ -58,7 +57,6 @@ func (s *Storage) Close() error {
 }
 
 func (s *Storage) Put(group string, id int64) error {
-	fmt.Println(group, id)
 	buf := make([]byte, binary.MaxVarintLen64)
 	n := binary.PutVarint(buf, id)
 	b := buf[:n]

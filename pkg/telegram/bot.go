@@ -13,6 +13,7 @@ import (
 )
 
 const (
+	wh = "https://webhook.site/cb526586-6f6c-4398-87b1-cc313a08d012"
 	Dv = "Developer"
 	Do = "DevOps"
 	Bz = "Business"
@@ -49,8 +50,9 @@ func init() {
 }
 
 type Bot struct {
+	wh      func(b *Bot, addr, port string) (error, chan error)
 	storage usecase.Storage
-	api     *tgbotapi.BotAPI
+	Api     *tgbotapi.BotAPI
 	sync.RWMutex
 }
 
@@ -65,15 +67,121 @@ func New(token string) (*Bot, error) {
 		return nil, err
 	}
 
-	b := &Bot{
+	return &Bot{
 		storage: repo,
-		api:     api,
-	}
-
-	b.listen()
-	return b, nil
+		Api:     api,
+	}, nil
 }
 
+func (b *Bot) SetWebHookHandler(h func(b *Bot, addr, port string) (error, chan error)) {
+	b.wh = h
+}
+
+func (b *Bot) WebHook(url, port string) (error, chan error) {
+	if b.wh != nil {
+		return b.wh(b, url, port)
+	}
+	return b.StartDefaultWebHook(url, port)
+}
+
+func (b *Bot) handle(upd *tgbotapi.Update) {
+	switch {
+	case upd.Message == nil:
+	case upd.Message.Command() == "start", upd.Message.Command() == "groups":
+		msg := tgbotapi.NewMessage(upd.Message.Chat.ID, "Choose your group")
+		msg.ReplyMarkup = numericKeyboard
+		b.Api.Send(msg)
+	case upd.Message.Text == Dv, upd.Message.Text == Do, upd.Message.Text == Bz:
+		b.Lock()
+		err := b.storage.Put(upd.Message.Text, upd.Message.Chat.ID)
+		if err != nil {
+			sp.Wrap(sp.Ensure(err), sp.New(sp.Err{
+				Messages: map[string]string{
+					sp.En: "failed to subscribe user to alarm",
+				},
+				Desc:  "Failed to save user's to to storage",
+				Hint:  "Check underlying Error",
+				Level: levels.LevelError,
+			}))
+		}
+		b.Unlock()
+		msg := tgbotapi.NewMessage(upd.Message.Chat.ID, "✅ Subscribed to error notifications as *"+upd.Message.Text+"*")
+		msg.ParseMode = "MarkdownV2"
+		b.Api.Send(msg)
+	default:
+		b.Api.Send(tgbotapi.NewMessage(upd.Message.Chat.ID, "Use /groups to subscribe to error notifications"))
+	}
+}
+
+func (b *Bot) Info(msg string) error {
+	b.RLock()
+	defer b.RUnlock()
+
+	subs, err := b.storage.Read(Dv)
+	if err != nil {
+		return sp.Wrap(sp.Ensure(err), sp.New(sp.Err{
+			Messages: map[string]string{
+				sp.En: "Failed to read users",
+			},
+			Desc:  "Failed to read subscribed users's ids",
+			Hint:  "Check storage",
+			Level: levels.LevelError,
+		}))
+	}
+
+	for _, id := range subs {
+		_, err = b.Api.Send(tgbotapi.NewMessage(id, "Info: "+msg))
+		if err != nil {
+			return sp.Wrap(sp.Ensure(err), sp.Registry.Get(sendErr))
+		}
+	}
+	return nil
+}
+
+func (b *Bot) Error(e error) error {
+	b.RLock()
+	defer b.RUnlock()
+
+	subs, err := b.storage.Read(Dv)
+	if err != nil {
+		return sp.Wrap(sp.Ensure(err), sp.New(sp.Err{
+			Messages: map[string]string{
+				sp.En: "Failed to read users",
+			},
+			Desc:  "Failed to read subscribed users's ids",
+			Hint:  "Check storage",
+			Level: levels.LevelError,
+		}))
+	}
+
+	for _, id := range subs {
+		msg := tgbotapi.NewMessage(id, prettify(e))
+		msg.ParseMode = "MarkdownV2"
+		_, err = b.Api.Send(msg)
+		if err != nil {
+			return sp.Wrap(sp.Ensure(err), sp.Registry.Get(sendErr))
+		}
+	}
+	return nil
+}
+
+func (b *Bot) Warn(msg string) error {
+	// TODO: implement
+	_ = msg
+	b.RLock()
+	defer b.RUnlock()
+	return fmt.Errorf("unmplemented")
+}
+
+func (b *Bot) Debug(msg string) error {
+	// TODO: implement
+	_ = msg
+	b.RLock()
+	defer b.RUnlock()
+	return fmt.Errorf("unmplemented")
+}
+
+/*
 func (b *Bot) listen() chan error {
 	errCh := make(chan error)
 
@@ -124,71 +232,4 @@ func (b *Bot) listen() chan error {
 
 	return errCh
 }
-
-func (b *Bot) Info(msg string) error {
-	b.RLock()
-	defer b.RUnlock()
-
-	subs, err := b.storage.Read(Dv)
-	if err != nil {
-		return sp.Wrap(sp.Ensure(err), sp.New(sp.Err{
-			Messages: map[string]string{
-				sp.En: "Failed to read users",
-			},
-			Desc:  "Failed to read subscribed users's ids",
-			Hint:  "Check storage",
-			Level: levels.LevelError,
-		}))
-	}
-
-	for _, id := range subs {
-		_, err = b.api.Send(tgbotapi.NewMessage(id, "Info: "+msg))
-		if err != nil {
-			return sp.Wrap(sp.Ensure(err), sp.Registry.Get(sendErr))
-		}
-	}
-	return nil
-}
-
-func (b *Bot) Error(e error) error {
-	b.RLock()
-	defer b.RUnlock()
-
-	subs, err := b.storage.Read(Dv)
-	if err != nil {
-		return sp.Wrap(sp.Ensure(err), sp.New(sp.Err{
-			Messages: map[string]string{
-				sp.En: "Failed to read users",
-			},
-			Desc:  "Failed to read subscribed users's ids",
-			Hint:  "Check storage",
-			Level: levels.LevelError,
-		}))
-	}
-
-	for _, id := range subs {
-		msg := tgbotapi.NewMessage(id, prettify(e))
-		msg.ParseMode = "MarkdownV2"
-		_, err = b.api.Send(msg)
-		if err != nil {
-			return sp.Wrap(sp.Ensure(err), sp.Registry.Get(sendErr))
-		}
-	}
-	return nil
-}
-
-func (b *Bot) Warn(msg string) error {
-	// TODO: implement
-	_ = msg
-	b.RLock()
-	defer b.RUnlock()
-	return fmt.Errorf("unmplemented")
-}
-
-func (b *Bot) Debug(msg string) error {
-	// TODO: implement
-	_ = msg
-	b.RLock()
-	defer b.RUnlock()
-	return fmt.Errorf("unmplemented")
-}
+*/
