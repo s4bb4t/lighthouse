@@ -8,6 +8,8 @@ import (
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 )
 
+// TODO: refactor
+
 func (e *Error) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
 	e.MarshalEasyJSON(&w)

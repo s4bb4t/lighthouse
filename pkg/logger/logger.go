@@ -88,11 +88,6 @@ func (l *Logger) With(args ...any) {
 
 // Error - logs error
 //
-// If error is sp.Error - it prepares and appears at right way
-// if e is not sp.Error, it will be logged at classic way
-//
-// if e is nil, it will be ignored
-//
 // lvl - error level
 func (l *Logger) Error(e error, lvl levels.Level) {
 	if l.noop || e == nil {

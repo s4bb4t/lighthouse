@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+// TODO: webhooks upside
+
 const (
 	wh     = "https://webhook.site/cb526586-6f6c-4398-87b1-cc313a08d012"
 	WHPath = "/lighthouse/telegram/webhook"

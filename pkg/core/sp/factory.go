@@ -3,35 +3,37 @@
 package sp
 
 import (
-	"crypto/sha256"
 	"fmt"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"hash"
 	"maps"
 	"path/filepath"
 	"runtime"
-	"time"
 )
 
 type (
+	CoreError struct {
+		Desc   string // detailed description
+		Hint   string // how to resolve
+		Source string // source of error (file path, line number, etc.)
+		Cause  error  // nested error
+	}
+
+	UserError struct {
+		MgsMap   map[string]string // localized message
+		HttpCode int               // HTTP status
+		Level    levels.Level      // error level
+	}
+
 	// Error represents a structured error type with extended information and metadata.
 	// It supports localized messages, detailed descriptions, resolution hints, and additional context.
 	Error struct {
-		stackTrace []string
+		Core CoreError
+		User UserError
 
-		messages map[string]string // localized message
-		desc     string            // detailed description
-		hint     string            // how to resolve
-		source   string            // source of error (file path, line number, etc.)
+		changed bool
+		meta    map[string]any // arbitrary fields (user_id, trace_id, etc.)
 
-		id        hash.Hash    // UUID or content hash
-		httpCode  int          // HTTP status
-		level     levels.Level // error level
-		timestamp time.Time    // when occurred
-
-		cause error          // nested error
-		meta  map[string]any // arbitrary fields (user_id, trace_id, etc.)
-
+		id                int
 		remainsUnderlying int
 		underlying        *Error
 	}
@@ -42,9 +44,10 @@ type (
 // This is the base constructor for creating new structured errors.
 func NewSpErr() *Error {
 	return &Error{
-		messages:  make(map[string]string),
-		id:        sha256.New(),
-		timestamp: time.Time{},
+		User: UserError{
+			MgsMap: make(map[string]string),
+		},
+		meta: make(map[string]any),
 	}
 }
 
@@ -54,10 +57,10 @@ func NewSpErr() *Error {
 func New(s Sample) *Error {
 	sp := NewSpErr()
 
-	if sp.messages == nil {
-		sp.messages = make(map[string]string)
+	if sp.User.MgsMap == nil {
+		sp.User.MgsMap = make(map[string]string)
 	}
-	maps.Copy(sp.messages, s.Messages)
+	maps.Copy(sp.User.MgsMap, s.Messages)
 
 	if sp.meta == nil {
 		sp.meta = make(map[string]any)
@@ -70,49 +73,48 @@ func New(s Sample) *Error {
 		SetCode(s.HttpCode).
 		SetLevel(s.Level).
 		SetCaused(s.Cause).
-		mustDone().
-		_path(1)
+		Path(1)
 }
 
 // SetCaused sets the underlying error.
 func (e *Error) SetCaused(err error) *Error {
-	e.cause = err
+	e.Core.Cause = err
 	return e
 }
 
 // SetMsg sets the localized message for the given language.
 func (e *Error) SetMsg(lg, msg string) *Error {
-	if e.messages == nil {
-		e.messages = make(map[string]string)
+	if e.User.MgsMap == nil {
+		e.User.MgsMap = make(map[string]string)
 	}
 
-	e.messages[lg] = msg
+	e.User.MgsMap[lg] = msg
 	return e
 }
 
 // SetDesc sets the complete description for the given language.
 func (e *Error) SetDesc(desc string) *Error {
-	e.desc = desc
+	e.Core.Desc = desc
 	return e
 }
 
 // SetHint sets the hint for the given language.
 func (e *Error) SetHint(hint string) *Error {
-	e.hint = hint
+	e.Core.Hint = hint
 	return e
 }
 
 // SetCode sets the HTTP status code for the error.
 // It accepts an integer representing the HTTP status code and returns the modified Error.
 func (e *Error) SetCode(httpCode int) *Error {
-	e.httpCode = httpCode
+	e.User.HttpCode = httpCode
 	return e
 }
 
 // SetLevel sets the severity level of the error.
 // It accepts a Level value and returns the modified Error.
 func (e *Error) SetLevel(lvl levels.Level) *Error {
-	e.level = lvl
+	e.User.Level = lvl
 	return e
 }
 
@@ -123,19 +125,19 @@ func (e *Error) AddMeta(key string, val any) *Error {
 	return e
 }
 
-// _path is an internal method that sets the error source based on the caller's location
+// Path is an internal method that sets the error source based on the caller's location
 // Stack frame level to look up (relative to caller)
 // Returns:
 // - *Error: The modified error instance with source set
 // The source format is "absolute_file_path:line_number"
-func (e *Error) _path(lvl int) *Error {
+func (e *Error) Path(lvl int) *Error {
 	_, file, line, ok := runtime.Caller(lvl + 1)
 	if ok {
 		absPath, err := filepath.Abs(file)
 		if err != nil {
 			panic(err)
 		}
-		e.source = fmt.Sprintf("%s:%d", absPath, line)
+		e.Core.Source = fmt.Sprintf("%s:%d", absPath, line)
 	}
 	return e
 }
@@ -146,5 +148,5 @@ func (e *Error) _path(lvl int) *Error {
 // - *Error: The modified error instance with source set
 // The source format is "absolute_file_path:line_number"
 func (e *Error) SetSource() *Error {
-	return e._path(0)
+	return e.Path(1)
 }

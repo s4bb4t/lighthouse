@@ -1,10 +1,6 @@
 package sp
 
 const (
-	SPErrorKey = "sperror"
-	HashKey    = "hash"
-	Path       = "source"
-
 	En = "en"
 	Ru = "ru"
 	De = "de"

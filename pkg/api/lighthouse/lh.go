@@ -1,7 +1,7 @@
 package lighthouse
 
 import (
-	"github.com/s4bb4t/lighthouse/internal/usecase"
+	"github.com/s4bb4t/lighthouse/pkg/core"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
 	"github.com/s4bb4t/lighthouse/pkg/core/sp"
 	"github.com/s4bb4t/lighthouse/pkg/logger"
@@ -9,8 +9,9 @@ import (
 )
 
 type Lighthouse struct {
-	log    usecase.Logger
-	notify usecase.Notify
+	log      core.Logger
+	notify   core.Notify
+	registry core.Registry
 }
 
 func New(stage, apikey string) *Lighthouse {
@@ -22,7 +23,7 @@ func New(stage, apikey string) *Lighthouse {
 }
 
 // ManualNew manually creates Lighthouse
-func ManualNew(log usecase.Logger, notify usecase.Notify) *Lighthouse {
+func ManualNew(log core.Logger, notify core.Notify) *Lighthouse {
 	return &Lighthouse{
 		log:    log,
 		notify: notify,
@@ -45,6 +46,14 @@ func (l *Lighthouse) AlertInfo(msg string) error {
 
 func (l *Lighthouse) AlertError(e error, group string) error {
 	return l.notify.Error(e, group)
+}
+
+func (l *Lighthouse) Get(id int) error {
+	return l.registry.Get(id)
+}
+
+func (l *Lighthouse) Reg(err error) {
+	l.registry.Reg(err)
 }
 
 //func (l *Lighthouse) AlertDebug(msg string) error {

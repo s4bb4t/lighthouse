@@ -6,12 +6,13 @@ import (
 	"testing"
 )
 
+// TODO: refactor tests
+
 func TestSPError_Spin(t *testing.T) {
 	root := Api()
 
 	err := root.Spin(levels.LevelError)
 	fmt.Println(err.Source())
-	fmt.Println(err.stackTrace)
 }
 
 func Api() *Error {

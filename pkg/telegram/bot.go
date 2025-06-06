@@ -2,7 +2,7 @@ package telegram
 
 import (
 	"github.com/s4bb4t/lighthouse/internal/storage"
-	"github.com/s4bb4t/lighthouse/internal/usecase"
+	"github.com/s4bb4t/lighthouse/pkg/core"
 	"sync"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -17,7 +17,7 @@ const (
 type Bot struct {
 	kb      *tgbotapi.ReplyKeyboardMarkup
 	wh      func(b *Bot, addr, port string) (error, chan error)
-	storage usecase.Storage
+	storage core.Storage
 	Api     *tgbotapi.BotAPI
 	sync.RWMutex
 }

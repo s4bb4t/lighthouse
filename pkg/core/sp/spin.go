@@ -7,20 +7,17 @@ import (
 // Pop extracts and returns the current error from the error chain.
 // If the current object is nil or there are no more underlying errors (remainsUnderlying == -1),
 // returns nil.
-func (e *Error) Pop() *Error {
+func (e *Error) pop() *Error {
 	if e == nil || e.remainsUnderlying == -1 {
 		return nil
 	}
-
 	result := *e
 	result.underlying = nil
-
 	if e.underlying != nil {
 		*e = *e.underlying
 	} else {
 		e.remainsUnderlying--
 	}
-
 	return &result
 }
 
@@ -44,22 +41,24 @@ func (e *Error) Spin(lvl levels.Level) *Error {
 
 	cp := &Error{}
 	*cp = *e
-	var stack []string
-
-	cur := cp.Pop()
+	cur := cp.pop()
 	if cur == nil {
 		return nil
 	}
-	if cur.level > lvl {
-		return Registry.errs[Internal]
+
+	if cur.User.Level > lvl {
+		return New(Sample{
+			Messages: map[string]string{
+				En: "No error found for level",
+			},
+			Desc: "Level provided is higher than the level of the error",
+			Hint: "Please, check your code and provide a valid error level",
+		})
 	}
 
 	last := cur
-	for cur != nil && cur.level <= lvl {
-		stack = append(stack, cur.source)
-		last, cur = cur, cp.Pop()
+	for cur != nil && cur.User.Level <= lvl {
+		last, cur = cur, cp.pop()
 	}
-
-	last.stackTrace = stack
 	return last
 }

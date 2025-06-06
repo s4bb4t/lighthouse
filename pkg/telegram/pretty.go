@@ -7,12 +7,13 @@ import (
 	"strings"
 )
 
+const divider = "\u2800" // non-breaking space
+
 func prettify(err error) string {
 	var b strings.Builder
 	b.Grow(600)
 	e := sp.Ensure(err).Spin(levels.LevelDebug)
 
-	const divider = "\u2800" // non-breaking space
 	section := func(title string) string {
 		return "┌─ *" + title + "*\n"
 	}
@@ -38,9 +39,6 @@ func prettify(err error) string {
 
 	b.WriteString(section("Source"))
 	b.WriteString("🧭 || `" + escape(e.Source()) + "` ||\n\n")
-
-	b.WriteString(section("Time"))
-	b.WriteString("⏰ " + escape(e.Time().Format("2006-01-02 15:04:05")) + "\n\n")
 
 	meta := e.AllMeta()
 	if len(meta) > 0 {
