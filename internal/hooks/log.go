@@ -5,7 +5,6 @@ import (
 	"github.com/s4bb4t/lighthouse/pkg/core/sp"
 	"go.uber.org/zap/zapcore"
 	"log/slog"
-	"strconv"
 )
 
 func Zap(e *sp.Error, lvl levels.Level) []zapcore.Field {
@@ -27,11 +26,6 @@ func Zap(e *sp.Error, lvl levels.Level) []zapcore.Field {
 		Type:   15,
 		String: err.Source(),
 	})
-	f = append(f, zapcore.Field{
-		Key:    "time",
-		Type:   15,
-		String: err.Time().String(),
-	})
 
 	return f
 }
@@ -49,19 +43,9 @@ func Slog(e *sp.Error, lvl levels.Level) []any {
 		Value: slog.StringValue(err.Hint()),
 	})
 	f = append(f, slog.Attr{
-		Key:   "err_time",
-		Value: slog.StringValue(err.Time().Format("2006.01.02 15:04:05")),
-	})
-	f = append(f, slog.Attr{
 		Key:   "source",
 		Value: slog.StringValue(err.Source()),
 	})
-	for i, call := range err.Stack() {
-		f = append(f, slog.Attr{
-			Key:   "trace call " + strconv.Itoa(i+1),
-			Value: slog.StringValue(call),
-		})
-	}
 
 	return f
 }
