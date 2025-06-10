@@ -42,7 +42,7 @@ func Slog(e *sp.Error, lvl levels.Level) []any {
 		Key:   "hint",
 		Value: slog.StringValue(err.Hint()),
 	})
-	if err.Caused() == nil {
+	if err.Caused() != nil {
 		f = append(f, slog.Attr{
 			Key:   "error",
 			Value: slog.AnyValue(err.Caused()),
