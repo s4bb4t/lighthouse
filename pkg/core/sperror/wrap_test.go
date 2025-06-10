@@ -1,4 +1,4 @@
-package sp
+package sperror
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func ExampleError_Unwrap() {
 	// Output:
 	//
 	// Inner error description: Try again later
-	// Type: *sp.Error
+	// Type: *sperror.Error
 	//
 	// example error
 }

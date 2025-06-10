@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/s4bb4t/lighthouse/internal/hooks"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 	"os"
 	"testing"
 	"time"
@@ -19,7 +19,7 @@ func TestBot(t *testing.T) {
 	b.StartLocalWebHook(wh, "8081")
 	time.Sleep(2 * time.Second)
 
-	E := sp.New(sp.Sample{
+	E := sperror.New(sperror.Sample{
 		Messages: map[string]string{
 			"en": "failed to read user's id",
 		},
@@ -35,7 +35,7 @@ func TestBot(t *testing.T) {
 
 	err = b.Error(E)
 	if err != nil {
-		fmt.Println(hooks.Slog(sp.Ensure(err), levels.LevelDebug))
+		fmt.Println(hooks.Slog(sperror.Ensure(err), levels.LevelDebug))
 	}
 	select {}
 }

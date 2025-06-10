@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"github.com/jszwec/csvutil"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 )
 
 const (
@@ -22,24 +22,24 @@ type Error struct {
 	Cause  string `csv:"cause,omitempty" xml:"cause,omitempty"`
 }
 
-func JSON(e *sp.Error) ([]byte, error) {
+func JSON(e *sperror.Error) ([]byte, error) {
 	return json.Marshal(e)
 }
 
-func CSV(errs ...*sp.Error) ([]byte, error) {
+func CSV(errs ...*sperror.Error) ([]byte, error) {
 	return exp(Csv, errs...)
 }
 
-func XML(errs ...*sp.Error) ([]byte, error) {
+func XML(errs ...*sperror.Error) ([]byte, error) {
 	return exp(Xml, errs...)
 }
 
-func exp(_type string, errs ...*sp.Error) ([]byte, error) {
+func exp(_type string, errs ...*sperror.Error) ([]byte, error) {
 	var arr []Error
 	for _, e := range errs {
 		err := Error{}
 		err.Source = e.Source()
-		err.Msg = e.Msg(sp.En)
+		err.Msg = e.Msg(sperror.En)
 		err.Desc = e.Desc()
 		err.Hint = e.Hint()
 		if e.Caused() != nil {

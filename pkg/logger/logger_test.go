@@ -2,7 +2,7 @@ package logger
 
 import (
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	sp2 "github.com/s4bb4t/lighthouse/pkg/core/sp"
+	sp2 "github.com/s4bb4t/lighthouse/pkg/core/sperror"
 	"os"
 	"testing"
 )

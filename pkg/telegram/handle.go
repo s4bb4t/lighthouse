@@ -3,7 +3,7 @@ package telegram
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 )
 
 func (b *Bot) handle(upd *tgbotapi.Update) {
@@ -17,9 +17,9 @@ func (b *Bot) handle(upd *tgbotapi.Update) {
 		b.Lock()
 		err := b.storage.Put(upd.Message.Text, upd.Message.Chat.ID)
 		if err != nil {
-			sp.Wrap(sp.Ensure(err), sp.New(sp.Sample{
+			sperror.Wrap(sperror.Ensure(err), sperror.New(sperror.Sample{
 				Messages: map[string]string{
-					sp.En: "failed to subscribe user to alarm",
+					sperror.En: "failed to subscribe user to alarm",
 				},
 				Desc:  "Failed to save user's to to storage",
 				Hint:  "Check underlying Error",

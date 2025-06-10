@@ -3,7 +3,7 @@ package hooks
 import (
 	"fmt"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	sp2 "github.com/s4bb4t/lighthouse/pkg/core/sp"
+	sp2 "github.com/s4bb4t/lighthouse/pkg/core/sperror"
 	"go.uber.org/zap"
 	"testing"
 )
@@ -17,7 +17,7 @@ func TestZap(t *testing.T) {
 
 func Api() *sp2.Error {
 	err := App()
-	return sp2.Wrap(err, sp2.Sample{
+	return sp2.WrapNew(err, sp2.Sample{
 		Messages: map[string]string{
 			sp2.En: "Internal",
 		},
@@ -28,7 +28,7 @@ func Api() *sp2.Error {
 }
 func App() *sp2.Error {
 	err := DB()
-	return sp2.Wrap(err, sp2.Sample{
+	return sp2.WrapNew(err, sp2.Sample{
 		Messages: map[string]string{
 			sp2.En: "App err",
 		},

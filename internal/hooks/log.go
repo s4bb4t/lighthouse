@@ -2,12 +2,12 @@ package hooks
 
 import (
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 	"go.uber.org/zap/zapcore"
 	"log/slog"
 )
 
-func Zap(e *sp.Error, lvl levels.Level) []zapcore.Field {
+func Zap(e *sperror.Error, lvl levels.Level) []zapcore.Field {
 	err := e.Spin(lvl)
 	var f []zapcore.Field
 
@@ -30,7 +30,7 @@ func Zap(e *sp.Error, lvl levels.Level) []zapcore.Field {
 	return f
 }
 
-func Slog(e *sp.Error, lvl levels.Level) []any {
+func Slog(e *sperror.Error, lvl levels.Level) []any {
 	err := e.Spin(lvl)
 	var f []any
 

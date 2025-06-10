@@ -3,7 +3,7 @@ package telegram
 import (
 	"fmt"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 	"strings"
 )
 
@@ -12,7 +12,7 @@ const divider = "\u2800" // non-breaking space
 func prettify(err error) string {
 	var b strings.Builder
 	b.Grow(600)
-	e := sp.Ensure(err).Spin(levels.LevelDebug)
+	e := sperror.Ensure(err).Spin(levels.LevelDebug)
 
 	section := func(title string) string {
 		return "┌─ *" + title + "*\n"
@@ -24,7 +24,7 @@ func prettify(err error) string {
 	b.WriteString("🚨 *" + escape(e.Level().String()) + "*\n\n")
 
 	b.WriteString(section("Message"))
-	b.WriteString("📝 `" + escape(e.Msg(sp.En)) + "`\n\n")
+	b.WriteString("📝 `" + escape(e.Msg(sperror.En)) + "`\n\n")
 
 	if e.Caused() != nil {
 		b.WriteString(section("Cause"))

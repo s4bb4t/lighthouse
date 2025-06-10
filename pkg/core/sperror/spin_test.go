@@ -1,4 +1,4 @@
-package sp
+package sperror
 
 import (
 	"fmt"
@@ -79,13 +79,13 @@ func TestSPError_Spin(t *testing.T) {
 			name:      "4",
 			err:       Api(),
 			spinLevel: levels.LevelUser,
-			want:      "/Users/dmitrijbratiskin/GolandProjects/sperr/pkg/core/sp/spin_test.go:103",
+			want:      "/Users/dmitrijbratiskin/GolandProjects/sperr/pkg/core/sperror/spin_test.go:103",
 		},
 		{
 			name:      "5",
 			err:       Api(),
 			spinLevel: 1,
-			want:      "/Users/dmitrijbratiskin/GolandProjects/sperr/pkg/core/sp/spin_test.go:103",
+			want:      "/Users/dmitrijbratiskin/GolandProjects/sperr/pkg/core/sperror/spin_test.go:103",
 		},
 		{
 			name:      "6",

@@ -3,15 +3,15 @@ package telegram
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 )
 
 func (b *Bot) readIds(group string) ([]int64, error) {
 	subs, err := b.storage.Read(group)
 	if err != nil {
-		return nil, sp.Wrap(sp.Ensure(err), sp.New(sp.Sample{
+		return nil, sperror.Wrap(sperror.Ensure(err), sperror.New(sperror.Sample{
 			Messages: map[string]string{
-				sp.En: "Failed to read users",
+				sperror.En: "Failed to read users",
 			},
 			Desc:  "Failed to read subscribed users's ids",
 			Hint:  "Check storage",
@@ -26,9 +26,9 @@ func (b *Bot) sendTo(ids []int64, msg *tgbotapi.MessageConfig) error {
 		msg.ChatID = id
 		_, err := b.Api.Send(*msg)
 		if err != nil {
-			return sp.New(sp.Sample{
+			return sperror.New(sperror.Sample{
 				Messages: map[string]string{
-					sp.En: "Failed to send message",
+					sperror.En: "Failed to send message",
 				},
 				Desc:     "Some error happened while sending message to user",
 				Hint:     "Check underlying error",

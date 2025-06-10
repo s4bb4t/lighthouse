@@ -3,7 +3,7 @@ package lighthouse
 import (
 	"github.com/s4bb4t/lighthouse/pkg/core"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 	"github.com/s4bb4t/lighthouse/pkg/logger"
 	"github.com/s4bb4t/lighthouse/pkg/telegram"
 )
@@ -17,7 +17,7 @@ type Lighthouse struct {
 func New(stage, apikey string) *Lighthouse {
 	b, _ := telegram.New(apikey, nil)
 	return &Lighthouse{
-		log:    logger.New(stage, sp.En, nil),
+		log:    logger.New(stage, sperror.En, nil),
 		notify: b,
 	}
 }

@@ -1,4 +1,4 @@
-package sp
+package sperror
 
 //
 //func TestSPError_DeepIs(t *testing.T) {

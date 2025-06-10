@@ -2,7 +2,7 @@ package registry
 
 import (
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 	"hash"
 	"sync"
 )
@@ -13,7 +13,7 @@ type (
 	// registry stores and manages Error instances with thread-safe access.
 	// it uses a hash-based mapping to store errors and includes a mutex for concurrent operations.
 	registry struct {
-		errs map[int]*sp.Error
+		errs map[int]*sperror.Error
 		sync.RWMutex
 	}
 )
@@ -28,10 +28,10 @@ func (r *registry) Reg(e error) (hash.Hash, error) {
 	defer r.Unlock()
 
 	if e == nil {
-		return nil, sp.New(sp.Sample{
+		return nil, sperror.New(sperror.Sample{
 			Messages: map[string]string{
-				sp.En: "Nil error provided",
-				sp.Ru: "передана nil ошибка",
+				sperror.En: "Nil error provided",
+				sperror.Ru: "передана nil ошибка",
 			},
 			Desc:     "Provided error is nil. This is not allowed)",
 			Hint:     "Please, check your code and provide a valid error",
@@ -42,10 +42,10 @@ func (r *registry) Reg(e error) (hash.Hash, error) {
 
 	//h, err := e.done()
 	//if err != nil {
-	//	return nil, sp.New(sp.Sample{
+	//	return nil, sperror.New(sperror.Sample{
 	//		Messages: map[string]string{
-	//			sp.En: "Failed to validate Error",
-	//			sp.Ru: "Ошибка в процессе валидации",
+	//			sperror.En: "Failed to validate Error",
+	//			sperror.Ru: "Ошибка в процессе валидации",
 	//		},
 	//		Desc:     "Failed to create hash id of your error. It happens when you try to register an error with an empty description. Provided data of error in Meta",
 	//		Hint:     "Please, check your fields and provide a valid description, hint and EN message for your error",
@@ -71,8 +71,8 @@ func (r *registry) Get(id int) error {
 		return nil
 	}
 
-	cp := &sp.Error{}
-	*cp = *sp.Ensure(e)
+	cp := &sperror.Error{}
+	*cp = *sperror.Ensure(e)
 
 	return cp.HelperSetSource()
 }

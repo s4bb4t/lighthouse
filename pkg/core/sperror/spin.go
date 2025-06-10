@@ -1,4 +1,4 @@
-package sp
+package sperror
 
 import (
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
@@ -37,7 +37,7 @@ func (e *Error) pop() *Error {
 // Usage pattern:
 //
 //	if err := handler.Do(); err != nil {
-//	    return sp.Ensure(err).Spin(levels.LevelUser)
+//	    return sperror.Ensure(err).Spin(levels.LevelUser)
 //	}
 //
 // If no error matches the level, Spin returns a generic internal error.

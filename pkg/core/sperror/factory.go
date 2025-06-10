@@ -1,6 +1,6 @@
-// Package sp provides structured error handling functionality with support for
+// Package sperror provides structured error handling functionality with support for
 // localized messages, error chaining, and detailed error information tracking.
-package sp
+package sperror
 
 import (
 	"fmt"

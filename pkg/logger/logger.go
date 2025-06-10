@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/s4bb4t/lighthouse/internal/hooks"
 	"github.com/s4bb4t/lighthouse/pkg/core/levels"
-	"github.com/s4bb4t/lighthouse/pkg/core/sp"
+	"github.com/s4bb4t/lighthouse/pkg/core/sperror"
 	"io"
 	"log/slog"
 	"os"
@@ -45,7 +45,7 @@ func Noop() *Logger {
 // lg - language code
 // out - io.Writer to write logs to
 //
-// Logger's language is used only to define sp.Error's message
+// Logger's language is used only to define sperror.Error's message
 func New(stage, lg string, out io.Writer) *Logger {
 	if out == nil {
 		out = os.Stdout
@@ -93,7 +93,7 @@ func (l *Logger) Error(e error, lvl levels.Level) {
 	if l.noop || e == nil {
 		return
 	}
-	err := sp.Ensure(e)
+	err := sperror.Ensure(e)
 	// spin-prepare and log error
 	l.log.Error(err.Msg(l.lg), hooks.Slog(err, lvl)...)
 }

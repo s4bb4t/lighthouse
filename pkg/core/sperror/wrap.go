@@ -1,4 +1,4 @@
-package sp
+package sperror
 
 import (
 	"errors"
