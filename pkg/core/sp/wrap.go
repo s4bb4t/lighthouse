@@ -15,10 +15,9 @@ func (e *Error) Unwrap() error {
 	return errors.New(e.Error())
 }
 
-// Wrap wraps src into e's underlying Error
-func (e *Error) Wrap(src *Error) *Error {
-	e.underlying = src
-	e.remainsUnderlying = src.remainsUnderlying + 1
+// Wrap wraps src into e's cause Error
+func (e *Error) Wrap(err error) *Error {
+	e.Core.Cause = err
 	return e
 }
 

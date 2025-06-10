@@ -8,7 +8,7 @@ import (
 func (e *Error) Is(err error) bool {
 	switch v := err.(type) {
 	case *Error:
-		if e.Desc() == v.Desc() && e.Hint() == v.Hint() && e.Msg(En) == v.Msg(En) {
+		if e.Desc() == v.Desc() {
 			return true
 		}
 	default:
