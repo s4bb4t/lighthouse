@@ -7,16 +7,13 @@ import (
 
 // Error returns the Error's description.
 func (e *Error) Error() string {
-	if e.Core.Cause != nil {
-		return e.Core.Cause.Error() + " " + e.Core.Desc + ": " + e.Core.Hint
-	}
 	return e.Core.Desc + ": " + e.Core.Hint
 }
 
 // Ensure wraps a given error into a custom *Error type if it is not already of that type.
 // If the error is already of the *Error type, it is returned as-is.
 // This method is useful for ensuring that an error is of the *Error type.
-// It is recommended to use this method instead of casting the error to *Error type directly.
+// It is recommended to use this method instead of casting the error to an *Error type directly.
 func Ensure(err error) *Error {
 	if sperr, ok := err.(*Error); ok {
 		return sperr
@@ -27,13 +24,16 @@ func Ensure(err error) *Error {
 		Hint:     "Check original .Error()",
 		Level:    levels.LevelError,
 		Cause:    err,
-	}).Path(1)
+	}).path(1)
 }
 
 // AllMeta returns a copy of all metadata associated with the error.
 // The returned map is a new instance to prevent modification of the original metadata.
 func (e *Error) AllMeta() map[string]any {
 	meta := make(map[string]any)
+	if e.meta == nil {
+		return meta
+	}
 	maps.Copy(meta, e.meta)
 	return meta
 }
@@ -47,7 +47,7 @@ func (e *Error) Caused() error {
 // Msg returns the error message for the specified language code.
 // Parameter lg represents the language code to retrieve the message for.
 func (e *Error) Msg(lg string) string {
-	return e.User.MgsMap[lg]
+	return e.User.Messages[lg]
 }
 
 // Desc returns the description of the error.
@@ -77,6 +77,9 @@ func (e *Error) Level() levels.Level {
 // Meta returns the metadata associated with the error.
 // The metadata provides additional information about the error.
 func (e *Error) Meta(key string) any {
+	if e.meta == nil {
+		return nil
+	}
 	return e.meta[key]
 }
 
@@ -84,15 +87,3 @@ func (e *Error) Meta(key string) any {
 func (e *Error) Source() string {
 	return e.Core.Source
 }
-
-// Id returns the ID of the error.
-// The ID is a unique identifier for the error.
-func (e *Error) Id() int {
-	return e.id
-}
-
-//// Stack returns the stack trace of the error.
-//// Stack trace can be accessed ONLY after Spin() is used
-//func (e *Error) Stack() []string {
-//	return e.
-//}

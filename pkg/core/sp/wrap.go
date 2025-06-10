@@ -1,11 +1,18 @@
 package sp
 
+import (
+	"errors"
+)
+
 // Unwrap returns the underlying error if it exists; otherwise, it returns the cause of the error.
 func (e *Error) Unwrap() error {
 	if e.underlying != nil {
 		return e.underlying
 	}
-	return e.Core.Cause
+	if e.Core.Cause != nil {
+		return e.Core.Cause
+	}
+	return errors.New(e.Error())
 }
 
 // Wrap wraps src into e's underlying Error
@@ -15,19 +22,17 @@ func (e *Error) Wrap(src *Error) *Error {
 	return e
 }
 
-// Wrap wraps `src` into new-initialized Error from provided Sample or existing Error.
-func Wrap(src *Error, dst any) *Error {
-	switch v := dst.(type) {
-	case Sample:
-		res := New(v)
-		res.underlying = src
-		res.remainsUnderlying = src.remainsUnderlying + 1
-		return res.Path(1)
-	case *Error:
-		v.underlying = src
-		v.remainsUnderlying = src.remainsUnderlying + 1
-		return v
-	default:
-		panic("unsupported destination type")
-	}
+// Wrap wraps `src` into existing Error.
+func Wrap(src *Error, dst *Error) *Error {
+	dst.underlying = src
+	dst.remainsUnderlying = src.remainsUnderlying + 1
+	return dst
+}
+
+// WrapNew wraps `src` into new-initialized Error from provided Sample.
+func WrapNew(src *Error, dst Sample) *Error {
+	res := New(dst)
+	res.underlying = src
+	res.remainsUnderlying = src.remainsUnderlying + 1
+	return res.path(1)
 }

@@ -74,5 +74,5 @@ func (r *registry) Get(id int) error {
 	cp := &sp.Error{}
 	*cp = *sp.Ensure(e)
 
-	return cp.Path(1)
+	return cp.HelperSetSource()
 }

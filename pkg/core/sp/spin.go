@@ -21,19 +21,31 @@ func (e *Error) pop() *Error {
 	return &result
 }
 
-// Spin returns a copy
-// of the last available error for the selected level. If you pass Error somewhere without calling
-// Spin() - the last error in the chain will be passed
+// Spin returns the most relevant *Error instance from the error chain that matches the provided severity level.
 //
-// Spin "unwinds" the Error up to the specified error level. With this function you can interpret the
-// same error differently depending on the context - lvl (error level).
+// This method traverses the error chain (created via Wrap) and returns the last *Error whose Level is
+// less than or equal to the provided level. This allows you to present different error messages to users,
+// logs, or monitoring systems depending on the trust/context level.
 //
-// If no suitable level is found in this Error instance - Registry[Internal] will be returned
+// For example:
+//   - LevelUser → return user-friendly message
+//   - LevelDebug → return detailed system context
+//   - LevelError → return technical issue without leaking internals
 //
-// Recommended:
+// ⚠️ If Spin() is not called and the error is passed as-is, the most recent (outer) error will be returned by default.
 //
-// - wrap the error through Wrap at each layer of your application to avoid losing context or
-// transmitting confidential information that may be contained within Error.
+// Usage pattern:
+//
+//	if err := handler.Do(); err != nil {
+//	    return sp.Ensure(err).Spin(levels.LevelUser)
+//	}
+//
+// If no error matches the level, Spin returns a generic internal error.
+//
+// Recommended practices:
+// - Always wrap each layer’s error with Wrap()
+// - Use Spin(level) before rendering/logging to avoid leaking internals
+// - Don’t call Spin() in places where full technical info is needed (e.g., logs)
 func (e *Error) Spin(lvl levels.Level) *Error {
 	if lvl == levels.LevelNoop {
 		return nil
@@ -53,7 +65,7 @@ func (e *Error) Spin(lvl levels.Level) *Error {
 			},
 			Desc: "Level provided is higher than the level of the error",
 			Hint: "Please, check your code and provide a valid error level",
-		})
+		}).path(1)
 	}
 
 	last := cur

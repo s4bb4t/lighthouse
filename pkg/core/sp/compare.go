@@ -4,14 +4,17 @@ import (
 	"errors"
 )
 
-// Is returns true if the error is the same as err. Implements the errors.Is
-// interface for error comparison. It returns true if the error's cause matches
-// the provided error.
+// Is checks if the provided error is a member of the Error chain.
 func (e *Error) Is(err error) bool {
-	if sperr, ok := err.(*Error); ok {
-		return sperr.id == e.id
+	switch v := err.(type) {
+	case *Error:
+		if e.Desc() == v.Desc() && e.Hint() == v.Hint() && e.Msg(En) == v.Msg(En) {
+			return true
+		}
+	default:
+		return errors.Is(e.Core.Cause, err)
 	}
-	return errors.Is(e.Core.Cause, err)
+	return false
 }
 
 // DeepIs traverses the entire Error chain to find a matching error. Returns true if

@@ -19,7 +19,7 @@ type (
 	}
 
 	UserError struct {
-		MgsMap   map[string]string // localized message
+		Messages map[string]string // localized message
 		HttpCode int               // HTTP status
 		Level    levels.Level      // error level
 	}
@@ -30,10 +30,8 @@ type (
 		Core CoreError
 		User UserError
 
-		changed bool
-		meta    map[string]any // arbitrary fields (user_id, trace_id, etc.)
+		meta map[string]any // arbitrary fields (user_id, trace_id, etc.)
 
-		id                int
 		remainsUnderlying int
 		underlying        *Error
 	}
@@ -45,7 +43,7 @@ type (
 func NewSpErr() *Error {
 	return &Error{
 		User: UserError{
-			MgsMap: make(map[string]string),
+			Messages: make(map[string]string),
 		},
 		meta: make(map[string]any),
 	}
@@ -57,10 +55,10 @@ func NewSpErr() *Error {
 func New(s Sample) *Error {
 	sp := NewSpErr()
 
-	if sp.User.MgsMap == nil {
-		sp.User.MgsMap = make(map[string]string)
+	if sp.User.Messages == nil {
+		sp.User.Messages = make(map[string]string)
 	}
-	maps.Copy(sp.User.MgsMap, s.Messages)
+	maps.Copy(sp.User.Messages, s.Messages)
 
 	if sp.meta == nil {
 		sp.meta = make(map[string]any)
@@ -73,7 +71,7 @@ func New(s Sample) *Error {
 		SetCode(s.HttpCode).
 		SetLevel(s.Level).
 		SetCaused(s.Cause).
-		Path(1)
+		path(1)
 }
 
 // SetCaused sets the underlying error.
@@ -84,11 +82,11 @@ func (e *Error) SetCaused(err error) *Error {
 
 // SetMsg sets the localized message for the given language.
 func (e *Error) SetMsg(lg, msg string) *Error {
-	if e.User.MgsMap == nil {
-		e.User.MgsMap = make(map[string]string)
+	if e.User.Messages == nil {
+		e.User.Messages = make(map[string]string)
 	}
 
-	e.User.MgsMap[lg] = msg
+	e.User.Messages[lg] = msg
 	return e
 }
 
@@ -125,12 +123,12 @@ func (e *Error) AddMeta(key string, val any) *Error {
 	return e
 }
 
-// Path is an internal method that sets the error source based on the caller's location
+// path is an internal method that sets the error source based on the caller's location
 // Stack frame level to look up (relative to caller)
 // Returns:
 // - *Error: The modified error instance with source set
 // The source format is "absolute_file_path:line_number"
-func (e *Error) Path(lvl int) *Error {
+func (e *Error) path(lvl int) *Error {
 	_, file, line, ok := runtime.Caller(lvl + 1)
 	if ok {
 		absPath, err := filepath.Abs(file)
@@ -148,5 +146,11 @@ func (e *Error) Path(lvl int) *Error {
 // - *Error: The modified error instance with source set
 // The source format is "absolute_file_path:line_number"
 func (e *Error) SetSource() *Error {
-	return e.Path(1)
+	return e.path(1)
+}
+
+// HelperSetSource sets the error source based on the caller's location + 1
+// It needs only if you want to set correct source of the error that is created not in place of usage
+func (e *Error) HelperSetSource() *Error {
+	return e.path(2)
 }
