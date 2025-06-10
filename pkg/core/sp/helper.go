@@ -12,23 +12,29 @@ func Builder() *Error {
 }
 
 func Any(caused error, desc, hint string) *Error {
-	return formError(http.StatusInternalServerError, caused, "Internal Server Error", desc, hint).path(1)
+	err := formError(http.StatusInternalServerError, nil, ErrInternal, desc, hint).path(1)
+	switch v := caused.(type) {
+	case *Error:
+		return Wrap(err, v)
+	default:
+		return err.Wrap(v)
+	}
 }
 
 func Internal(caused error, desc, hint string) *Error {
-	return formError(http.StatusInternalServerError, caused, "Internal Server Error", desc, hint).path(1)
+	return formError(http.StatusInternalServerError, caused, ErrInternal, desc, hint).path(1)
 }
 
 func NotFound(desc, hint string) *Error {
-	return formError(http.StatusNotFound, nil, "Not Found", desc, hint).path(1)
+	return formError(http.StatusNotFound, nil, ErrNotFound, desc, hint).path(1)
 }
 
 func Forbidden(desc, hint string) *Error {
-	return formError(http.StatusForbidden, nil, "Forbidden", desc, hint).path(1)
+	return formError(http.StatusForbidden, nil, ErrForbidden, desc, hint).path(1)
 }
 
 func BadRequest(desc, hint string) *Error {
-	return formError(http.StatusBadRequest, nil, "Bad Request", desc, hint).path(1)
+	return formError(http.StatusBadRequest, nil, ErrBadReq, desc, hint).path(1)
 }
 
 func formError(code int, err error, msg, desc, hint string) *Error {

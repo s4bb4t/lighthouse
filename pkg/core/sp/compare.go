@@ -2,13 +2,14 @@ package sp
 
 import (
 	"errors"
+	"strings"
 )
 
 // Is checks if the provided error is a member of the Error chain.
 func (e *Error) Is(err error) bool {
 	switch v := err.(type) {
 	case *Error:
-		if e.Desc() == v.Desc() {
+		if strings.ToLower(e.Msg(En)) == strings.ToLower(v.Msg(En)) || v.Desc() == e.Desc() {
 			return true
 		}
 	default:
