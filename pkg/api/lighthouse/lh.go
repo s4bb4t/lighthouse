@@ -49,10 +49,12 @@ func (l *Lighthouse) AlertError(e error, group string) error {
 }
 
 func (l *Lighthouse) Get(id int) error {
+	panic("UNIMPLEMENTED")
 	return l.registry.Get(id)
 }
 
 func (l *Lighthouse) Reg(err error) {
+	panic("UNIMPLEMENTED")
 	l.registry.Reg(err)
 }
 
