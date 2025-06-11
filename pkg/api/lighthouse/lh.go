@@ -30,14 +30,24 @@ func ManualNew(log core.Logger, notify core.Notify) *Lighthouse {
 	}
 }
 
+func (l *Lighthouse) Warn(msg string, err error, args ...any) {
+	l.log.Warn(msg, err, args...)
+}
+
 func (l *Lighthouse) Debug(msg string, args ...any) {
 	l.log.Debug(msg, args...)
 }
+
 func (l *Lighthouse) Info(msg string, args ...any) {
 	l.log.Info(msg, args...)
 }
-func (l *Lighthouse) Error(e error, lvl levels.Level) {
-	l.log.Error(e, lvl)
+
+func (l *Lighthouse) ErrorWithLevel(e error, lvl levels.Level) {
+	l.log.ErrorWithLevel(e, lvl)
+}
+
+func (l *Lighthouse) Error(e error) {
+	l.log.Error(e)
 }
 
 func (l *Lighthouse) AlertInfo(msg string) error {

@@ -16,7 +16,9 @@ type (
 
 	// Logger defines methods for logging errors and informational messages.
 	Logger interface {
-		Error(e error, lvl levels.Level)
+		ErrorWithLevel(e error, lvl levels.Level)
+		Error(e error)
+		Warn(msg string, e error, args ...any)
 		Debug(msg string, args ...any)
 		Info(msg string, args ...any)
 	}
