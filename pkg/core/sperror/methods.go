@@ -10,6 +10,18 @@ func (e *Error) Error() string {
 	return e.Core.Desc + ": " + e.Core.Hint
 }
 
+// Copy returns a copy of the Error instance.
+func (e *Error) Copy() *Error {
+	var err Error
+	err = *e
+	return &err
+}
+
+// Copy returns a copy of the Error instance.
+func Copy(e *Error) *Error {
+	return e.Copy()
+}
+
 // Ensure wraps a given error into a custom *Error type if it is not already of that type.
 // If the error is already of the *Error type, it is returned as-is.
 // This method is useful for ensuring that an error is of the *Error type.

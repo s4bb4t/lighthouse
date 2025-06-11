@@ -34,7 +34,7 @@ func TestLogger_Dev(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d.Error(tt.args, levels.LevelInfo)
+			d.Error(tt.args)
 		})
 	}
 }
@@ -98,7 +98,7 @@ func TestLogger_Error(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l.Error(tt.args.e, tt.args.lvl)
+			l.ErrorWithLevel(tt.args.e, tt.args.lvl)
 		})
 	}
 }

@@ -86,16 +86,42 @@ func (l *Logger) With(args ...any) {
 }
 */
 
-// Error - logs error
+// Todo: add colours
+
+// Warn - logs message with source path and optional error
 //
-// lvl - error level
-func (l *Logger) Error(e error, lvl levels.Level) {
+// Error can be nil - it's ok
+func (l *Logger) Warn(msg string, e error, args ...any) {
+	if l.noop {
+		return
+	}
+	args = append(args, slog.String("log_at", l.pd(1)))
+	if e != nil {
+		args = append(args, hooks.Slog(sperror.Ensure(e), levels.LevelError)...)
+	}
+	l.log.Warn(msg, args...)
+}
+
+// ErrorWithLevel - logs error with specified level
+func (l *Logger) ErrorWithLevel(e error, lvl levels.Level) {
 	if l.noop || e == nil {
 		return
 	}
 	err := sperror.Ensure(e)
 	// spin-prepare and log error
 	l.log.Error(err.Msg(l.lg), hooks.Slog(err, lvl)...)
+}
+
+// Error - logs error with default Error level
+//
+// lvl - error level
+func (l *Logger) Error(e error) {
+	if l.noop || e == nil {
+		return
+	}
+	err := sperror.Ensure(e)
+	// spin-prepare and log error
+	l.log.Error(err.Msg(l.lg), hooks.Slog(err, levels.LevelError)...)
 }
 
 // Debug - prints additional debug log to Logger's out
