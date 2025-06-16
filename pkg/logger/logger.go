@@ -98,7 +98,6 @@ func (l *Logger) Warn(msg string, e error, args ...any) {
 	if l.noop {
 		return
 	}
-	args = append(args, slog.String("log_at", l.pd(1)))
 	if e != nil {
 		args = append(args, hooks.Slog(sperror.Ensure(e), levels.LevelError)...)
 	}
