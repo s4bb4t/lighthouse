@@ -88,6 +88,9 @@ func (l *Logger) With(args ...any) {
 
 // Todo: add colours
 
+//args = append(args, slog.String("log_at", l.pd(1)))
+// TODO: log_at
+
 // Warn - logs message with source path and optional error
 //
 // Error can be nil - it's ok
@@ -99,7 +102,6 @@ func (l *Logger) Warn(msg string, e error, args ...any) {
 	if e != nil {
 		args = append(args, hooks.Slog(sperror.Ensure(e), levels.LevelError)...)
 	}
-	args = append(args, slog.String("log_at", l.pd(1)))
 	l.log.Warn(msg, args...)
 }
 
@@ -111,7 +113,6 @@ func (l *Logger) ErrorWithLevel(e error, lvl levels.Level) {
 	err := sperror.Ensure(e)
 	// spin-prepare and log error
 	args := hooks.Slog(err, lvl)
-	args = append(args, slog.String("log_at", l.pd(1)))
 	l.log.Error(err.Msg(l.lg), args...)
 }
 
@@ -125,7 +126,6 @@ func (l *Logger) Error(e error) {
 	err := sperror.Ensure(e)
 	// spin-prepare and log error
 	args := hooks.Slog(err, levels.LevelError)
-	args = append(args, slog.String("log_at", l.pd(1)))
 	l.log.Error(err.Msg(l.lg), args...)
 }
 
@@ -134,7 +134,6 @@ func (l *Logger) Debug(msg string, args ...any) {
 	if l.noop {
 		return
 	}
-	args = append(args, slog.String("log_at", l.pd(1)))
 	l.log.Debug(msg, args...)
 }
 
@@ -143,6 +142,5 @@ func (l *Logger) Info(msg string, args ...any) {
 	if l.noop {
 		return
 	}
-	args = append(args, slog.String("log_at", l.pd(1)))
 	l.log.Info(msg, args...)
 }
