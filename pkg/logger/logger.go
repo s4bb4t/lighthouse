@@ -99,6 +99,7 @@ func (l *Logger) Warn(msg string, e error, args ...any) {
 	if e != nil {
 		args = append(args, hooks.Slog(sperror.Ensure(e), levels.LevelError)...)
 	}
+	args = append(args, slog.String("log_at", l.pd(1)))
 	l.log.Warn(msg, args...)
 }
 
@@ -109,7 +110,9 @@ func (l *Logger) ErrorWithLevel(e error, lvl levels.Level) {
 	}
 	err := sperror.Ensure(e)
 	// spin-prepare and log error
-	l.log.Error(err.Msg(l.lg), hooks.Slog(err, lvl)...)
+	args := hooks.Slog(err, lvl)
+	args = append(args, slog.String("log_at", l.pd(1)))
+	l.log.Error(err.Msg(l.lg), args...)
 }
 
 // Error - logs error with default Error level
@@ -121,7 +124,9 @@ func (l *Logger) Error(e error) {
 	}
 	err := sperror.Ensure(e)
 	// spin-prepare and log error
-	l.log.Error(err.Msg(l.lg), hooks.Slog(err, levels.LevelError)...)
+	args := hooks.Slog(err, levels.LevelError)
+	args = append(args, slog.String("log_at", l.pd(1)))
+	l.log.Error(err.Msg(l.lg), args...)
 }
 
 // Debug - prints additional debug log to Logger's out
@@ -138,5 +143,6 @@ func (l *Logger) Info(msg string, args ...any) {
 	if l.noop {
 		return
 	}
+	args = append(args, slog.String("log_at", l.pd(1)))
 	l.log.Info(msg, args...)
 }
