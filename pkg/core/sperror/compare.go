@@ -9,7 +9,7 @@ import (
 func (e *Error) Is(err error) bool {
 	switch v := err.(type) {
 	case *Error:
-		if strings.ToLower(e.Msg(En)) == strings.ToLower(v.Msg(En)) || v.Desc() == e.Desc() {
+		if strings.ToLower(e.Msg(En)) == strings.ToLower(v.Msg(En)) || errors.Is(e.Core.Cause, err) || v.Desc() == e.Desc() {
 			return true
 		}
 	default:
