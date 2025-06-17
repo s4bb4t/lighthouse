@@ -28,16 +28,19 @@ func ExampleError_Unwrap() {
 }
 
 func ExampleError_Wrap() {
-	inner := New(Sample{})
+	inner := New(Sample{
+		Desc: "Inner error",
+		Hint: "hint",
+	})
 
 	outer := New(Sample{
 		Desc: "Application error description",
 		Hint: "hint",
 	}).Wrap(inner)
 
-	fmt.Printf("%v\n", outer)
+	fmt.Printf("%v\n", outer.Unwrap())
 	// Output:
-	// Application error description: hint
+	// Inner error: hint
 }
 
 func ExampleWrap() {
@@ -55,14 +58,14 @@ func ExampleWrap() {
 }
 
 func ExampleWrapNew() {
-	src := New(Sample{})
-
-	wrapped := WrapNew(src, Sample{
+	src := New(Sample{
 		Desc: "Application error description",
 		Hint: "hint",
 	})
 
-	fmt.Printf("%v\n", wrapped)
+	wrapped := WrapNew(src, Sample{})
+
+	fmt.Printf("%v\n", wrapped.Unwrap())
 	// Output: Application error description: hint
 }
 

@@ -7,7 +7,11 @@ import (
 
 // Error returns the Error's description.
 func (e *Error) Error() string {
-	return e.Core.Desc + ": " + e.Core.Hint
+	if e.Core.Hint != "" {
+		return e.Core.Desc + ": " + e.Core.Hint
+	}
+
+	return e.Core.Desc
 }
 
 // Copy returns a copy of the Error instance.
