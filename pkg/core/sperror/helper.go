@@ -15,7 +15,7 @@ func Any(caused error, desc, hint string) *Error {
 	err := formError(http.StatusInternalServerError, nil, ErrInternal, desc, hint).path(1)
 	switch v := caused.(type) {
 	case *Error:
-		return Wrap(err, v)
+		return Wrap(v, err)
 	default:
 		return err.Wrap(v)
 	}

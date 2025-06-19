@@ -93,6 +93,12 @@ func TestSPError_Spin(t *testing.T) {
 			spinLevel: levels.LevelError,
 			want:      "",
 		},
+		{
+			name:      "SameErrors",
+			err:       Any(Any(BadRequest("1", "1"), "2", "2"), "3", "3"),
+			spinLevel: levels.LevelError,
+			want:      "/Users/dmitrijbratiskin/GolandProjects/sperr/pkg/core/sperror/spin_test.go:98",
+		},
 	}
 
 	for _, tt := range tests {
@@ -101,6 +107,7 @@ func TestSPError_Spin(t *testing.T) {
 				return
 			}
 			got := tt.err.Spin(tt.spinLevel).Source()
+			t.Log(tt.err.Spin(tt.spinLevel).Desc())
 			if got != tt.want {
 				t.Errorf("Error.Spin() = %v, want %v", got, tt.want)
 			}
